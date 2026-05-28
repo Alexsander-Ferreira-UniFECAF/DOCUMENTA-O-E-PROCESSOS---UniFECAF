@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Planos de Pagamento e Trancamento de Matrícula — UniFECAF</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --blue:         #0057A8;
+    --blue-dark:    #003D7A;
+    --blue-darker:  #002855;
+    --blue-light:   #E8F1FB;
+    --blue-mid:     #CCE0F5;
+    --green:        #2EAD6A;
+    --green-dark:   #1B7A3E;
+    --green-light:  #E4F7EE;
+    --gold:         #F5A623;
+    --gold-light:   #FEF7E8;
+    --red:          #C0392B;
+    --red-light:    #FDECEA;
+    --gray-dark:    #1E1E1E;
+    --gray-mid:     #555;
+    --gray-light:   #F4F6F9;
+    --white:        #FFFFFF;
+    --shadow:       0 2px 12px rgba(0,87,168,0.10);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Open Sans', sans-serif;
+    background: #EEF3FA;
+    color: var(--gray-dark);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* PRINT BAR */
+  .print-bar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    background: var(--blue-darker);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 32px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+  .print-bar span {
+    color: rgba(255,255,255,0.7);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px; font-weight: 600;
+    letter-spacing: 0.05em; text-transform: uppercase;
+  }
+  .btn-print {
+    background: var(--green); color: #fff; border: none;
+    padding: 9px 28px; border-radius: 6px;
+    font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 13px;
+    cursor: pointer; display: flex; align-items: center; gap: 8px;
+    transition: background 0.2s, transform 0.1s; letter-spacing: 0.03em;
+  }
+  .btn-print:hover { background: #259959; transform: translateY(-1px); }
+  .btn-print svg { width: 16px; height: 16px; }
+
+  /* PAGE */
+  .page {
+    margin: 60px auto 40px; max-width: 900px;
+    background: var(--white); border-radius: 4px; overflow: hidden;
+    box-shadow: 0 4px 32px rgba(0,40,85,0.18);
+  }
+
+  /* COVER */
+  .cover {
+    background: linear-gradient(135deg, var(--blue-darker) 0%, var(--blue-dark) 55%, var(--blue) 100%);
+    padding: 40px 52px 36px; position: relative; overflow: hidden;
+  }
+  .cover::before {
+    content: ''; position: absolute; top: -80px; right: -80px;
+    width: 320px; height: 320px; border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+  }
+  .cover::after {
+    content: ''; position: absolute; bottom: -50px; left: 25%;
+    width: 240px; height: 240px; border-radius: 50%;
+    background: rgba(46,173,106,0.08);
+  }
+  .cover-top {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    margin-bottom: 28px; position: relative; z-index: 1;
+  }
+  .cover-logo { height: 42px; width: auto; display: block; }
+  .cover-meta { text-align: right; }
+  .cover-badge {
+    display: inline-block;
+    background: rgba(46,173,106,0.22); border: 1px solid rgba(46,173,106,0.45);
+    color: #7DFFC0; font-family: 'Montserrat', sans-serif;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 5px 14px; border-radius: 20px; margin-bottom: 6px;
+  }
+  .cover-meta-info { font-size: 11px; color: rgba(255,255,255,0.5); line-height: 1.7; margin-top: 4px; }
+  .cover-content { position: relative; z-index: 1; }
+  .cover-eyebrow {
+    font-family: 'Montserrat', sans-serif; font-size: 10px; font-weight: 700;
+    letter-spacing: 0.15em; text-transform: uppercase; color: var(--green); margin-bottom: 10px;
+  }
+  .cover h1 {
+    font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 32px;
+    color: #fff; line-height: 1.15; margin-bottom: 8px; letter-spacing: -0.02em;
+  }
+  .cover h2 {
+    font-family: 'Montserrat', sans-serif; font-weight: 400; font-size: 14px;
+    color: rgba(255,255,255,0.65); line-height: 1.55;
+  }
+  .cover-accent {
+    margin-top: 28px; height: 3px;
+    background: linear-gradient(90deg, var(--green), rgba(46,173,106,0.1));
+    border-radius: 2px;
+  }
+
+  /* ELABORADO POR */
+  .doc-info {
+    background: #F7FAFF;
+    border-bottom: 2px solid var(--blue-mid);
+    padding: 14px 52px;
+    display: flex; gap: 40px; flex-wrap: wrap;
+  }
+  .doc-info-item { display: flex; flex-direction: column; gap: 1px; }
+  .doc-info-label {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 9px; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--blue);
+  }
+  .doc-info-value { font-size: 12.5px; color: var(--gray-dark); font-weight: 600; }
+
+  /* BODY */
+  .body { padding: 40px 52px; }
+
+  /* SECTION */
+  .section { margin-bottom: 40px; }
+  .section-title {
+    font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 11px;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--blue-dark);
+    padding-bottom: 8px; border-bottom: 3px solid var(--blue);
+    margin-bottom: 18px; display: flex; align-items: center; gap: 10px;
+  }
+  .section-title .num {
+    background: var(--blue-dark); color: #fff;
+    width: 24px; height: 24px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; flex-shrink: 0;
+  }
+  p.text { color: var(--gray-mid); margin-bottom: 10px; font-size: 13.5px; line-height: 1.7; }
+
+  /* CALLOUT */
+  .callout {
+    border-left: 4px solid var(--blue); background: var(--blue-light);
+    padding: 12px 16px; border-radius: 0 6px 6px 0;
+    margin: 14px 0; font-size: 13px; color: var(--gray-dark); line-height: 1.6;
+  }
+  .callout.green  { border-color: var(--green-dark); background: var(--green-light); }
+  .callout.gold   { border-color: var(--gold); background: var(--gold-light); }
+  .callout.red    { border-color: var(--red); background: var(--red-light); }
+  .callout strong { color: var(--blue-darker); }
+  .callout.green  strong { color: var(--green-dark); }
+  .callout.gold   strong { color: #8a5e00; }
+  .callout.red    strong { color: var(--red); }
+
+  /* PLANOS */
+  .planos-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 18px 0; }
+  .plano-card { border-radius: 8px; overflow: hidden; box-shadow: var(--shadow); border: 1px solid #dde8f5; }
+  .plano-card-header {
+    padding: 20px 22px 16px; color: #fff; position: relative; overflow: hidden;
+  }
+  .plano-card-header::after {
+    content: ''; position: absolute; top: -20px; right: -20px;
+    width: 80px; height: 80px; border-radius: 50%; background: rgba(255,255,255,0.07);
+  }
+  .plano-card-header.ant { background: linear-gradient(135deg, var(--blue-dark), var(--blue)); }
+  .plano-card-header.pst { background: linear-gradient(135deg, var(--blue-darker), var(--blue-dark)); }
+  .plano-sigla { font-family: 'Montserrat', sans-serif; font-size: 38px; font-weight: 900; letter-spacing: 3px; line-height: 1; margin-bottom: 2px; }
+  .plano-nome { font-family: 'Montserrat', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.7; }
+  .plano-card-body { padding: 18px 20px; background: var(--white); }
+  .plano-definicao { font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 700; color: var(--blue-darker); margin-bottom: 12px; }
+  .plano-fluxo {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--blue-light); padding: 10px 14px; border-radius: 6px; margin-bottom: 14px;
+  }
+  .fluxo-passo { background: var(--blue-dark); color: #fff; padding: 5px 12px; border-radius: 4px; font-size: 11.5px; font-family: 'Montserrat', sans-serif; font-weight: 600; white-space: nowrap; }
+  .fluxo-seta { color: var(--blue); font-size: 20px; font-weight: 700; line-height: 1; }
+  .plano-card-body ul { padding-left: 16px; }
+  .plano-card-body ul li { font-size: 12.5px; color: var(--gray-mid); margin-bottom: 6px; line-height: 1.55; }
+
+  /* TABLES */
+  .tbl-wrap { overflow-x: auto; margin: 14px 0; border-radius: 8px; box-shadow: var(--shadow); }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { background: var(--blue-darker); color: #fff; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 11.5px; letter-spacing: 0.04em; padding: 11px 14px; text-align: center; }
+  th.left { text-align: left; }
+  td { padding: 10px 14px; border-bottom: 1px solid #E0E8F4; text-align: center; color: var(--gray-mid); }
+  td.left { text-align: left; }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: var(--blue-light); }
+  tr:nth-child(odd)  td { background: var(--white); }
+  tr.row-blue  td { background: var(--blue-mid) !important; color: var(--blue-darker); font-weight: 700; }
+  tr.row-green td { background: var(--green-light) !important; color: var(--green-dark); font-weight: 600; }
+  tr.row-gold  td { background: var(--gold-light) !important; color: #7a5500; font-weight: 700; }
+  tr.row-red   td { background: var(--red-light) !important; color: var(--red); font-weight: 600; }
+
+  .tag { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; font-family: 'Montserrat', sans-serif; white-space: nowrap; }
+  .tag.ant      { background: var(--blue);       color: #fff; }
+  .tag.pst      { background: var(--blue-darker); color: #fff; }
+  .tag.devida   { background: var(--red);         color: #fff; }
+  .tag.indevida { background: var(--green-dark);  color: #fff; }
+  .tag.prazo    { background: var(--gold);        color: #1a1a1a; }
+  .tag.check    { background: var(--green-light); color: var(--green-dark); border: 1px solid #9bddbd; }
+
+  /* STEPS */
+  .steps { margin: 18px 0; }
+  .step { display: flex; gap: 16px; align-items: flex-start; }
+  .step-num { background: var(--blue-dark); color: #fff; font-weight: 800; font-family: 'Montserrat', sans-serif; font-size: 14px; min-width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+  .step-body { padding-bottom: 16px; flex: 1; }
+  .step-titulo { font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 700; color: var(--blue-darker); margin-bottom: 5px; }
+  .step-desc { font-size: 13px; color: var(--gray-mid); line-height: 1.65; margin-bottom: 8px; }
+  .step-sub { padding: 10px 14px; border-radius: 0 6px 6px 0; font-size: 12.5px; line-height: 1.65; margin-top: 6px; }
+  .step-sub.ant { background: var(--blue-light); border-left: 3px solid var(--blue); color: var(--blue-darker); }
+  .step-sub.pst { background: #d4e7f6; border-left: 3px solid var(--blue-dark); color: var(--blue-darker); }
+  .step-line { width: 2px; min-height: 18px; background: var(--blue-mid); margin-left: 16px; margin-top: -2px; margin-bottom: -2px; }
+
+  /* EXEMPLOS */
+  .exemplo-box { border: 1px solid #D0DFF0; border-radius: 8px; overflow: hidden; margin: 18px 0; box-shadow: var(--shadow); }
+  .exemplo-header { background: var(--blue-darker); color: #fff; padding: 11px 20px; font-family: 'Montserrat', sans-serif; font-size: 11.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; display: flex; align-items: center; gap: 10px; }
+  .exemplo-body { padding: 20px; background: var(--white); }
+  .exemplo-linha { display: flex; gap: 12px; margin-bottom: 10px; align-items: baseline; }
+  .exemplo-label { font-family: 'Montserrat', sans-serif; font-size: 10px; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: 0.08em; min-width: 96px; flex-shrink: 0; }
+  .exemplo-valor { font-size: 13px; color: var(--gray-dark); font-weight: 500; line-height: 1.5; }
+  .exemplo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px; border-top: 1px solid #E0E8F4; padding-top: 14px; }
+  .exemplo-card { border-radius: 6px; padding: 14px 16px; border: 1px solid; }
+  .exemplo-card.ant { border-color: #9BBEE0; background: var(--blue-light); }
+  .exemplo-card.pst { border-color: #7AA9D4; background: #d5e8f7; }
+  .exemplo-card-titulo { font-family: 'Montserrat', sans-serif; font-size: 10px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
+  .exemplo-card.ant .exemplo-card-titulo { color: var(--blue-dark); }
+  .exemplo-card.pst .exemplo-card-titulo { color: var(--blue-darker); }
+  .exemplo-card p { font-size: 12.5px; color: var(--gray-mid); margin-bottom: 6px; line-height: 1.5; }
+  .resultado { display: flex; align-items: center; gap: 6px; margin-top: 10px; padding: 6px 12px; border-radius: 4px; font-family: 'Montserrat', sans-serif; font-size: 11.5px; font-weight: 700; }
+  .resultado.devida    { background: var(--red-light);   color: var(--red);        border: 1px solid #f5c0bc; }
+  .resultado.indevida  { background: var(--green-light);  color: var(--green-dark); border: 1px solid #a8e4c2; }
+  .resultado.verificar { background: var(--gold-light);  color: #8a5e00;           border: 1px solid #f5d88a; }
+
+  /* GLOSSÁRIO */
+  .glossario-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 14px 0; }
+  .glossario-item { background: var(--gray-light); border: 1px solid #dde8f5; border-left: 3px solid var(--blue); border-radius: 0 6px 6px 0; padding: 11px 14px; }
+  .glossario-termo { font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 700; color: var(--blue-dark); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+  .glossario-def { font-size: 12.5px; color: var(--gray-mid); line-height: 1.5; margin: 0; }
+
+  /* HIGHLIGHT */
+  .highlight-box { background: var(--blue-darker); border-radius: 8px; padding: 18px 24px; display: flex; align-items: center; justify-content: space-between; margin: 16px 0; flex-wrap: wrap; gap: 10px; }
+  .highlight-box .label { font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 12px; color: rgba(255,255,255,0.7); }
+  .highlight-box .value { font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 22px; color: var(--green); }
+
+  /* TOC */
+  .toc { background: var(--blue-light); border: 1px solid var(--blue-mid); border-left: 4px solid var(--blue); border-radius: 0 8px 8px 0; padding: 18px 22px; margin-bottom: 32px; }
+  .toc-title { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--blue-dark); margin-bottom: 12px; }
+  .toc ol { padding-left: 18px; }
+  .toc li { font-size: 13px; color: var(--blue); margin-bottom: 5px; font-weight: 600; }
+  .toc li a { color: var(--blue); text-decoration: none; }
+  .toc li a:hover { text-decoration: underline; }
+  .toc li span { color: var(--gray-mid); font-weight: 400; }
+
+  hr.divider { border: none; border-top: 2px solid var(--blue-mid); margin: 36px 0; }
+
+
+  /* FOOTER */
+  .doc-footer { background: var(--blue-darker); padding: 18px 52px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+  .doc-footer img { height: 30px; width: auto; }
+  .doc-footer span { font-size: 11px; color: rgba(255,255,255,0.5); font-family: 'Montserrat', sans-serif; }
+
+
+  /* MOBILE */
+  @media (max-width: 620px) {
+    .print-bar { padding: 8px 16px; }
+    .print-bar span { font-size: 10px; letter-spacing: 0; }
+    .btn-print { padding: 7px 14px; font-size: 12px; }
+
+    .page { margin: 48px 0 0; border-radius: 0; }
+
+    .cover { padding: 24px 20px 28px; }
+    .cover-top { flex-direction: column; gap: 14px; margin-bottom: 20px; }
+    .cover-logo { height: 34px; }
+    .cover-meta { text-align: left; }
+    .cover-badge { font-size: 9px; padding: 4px 10px; }
+    .cover h1 { font-size: 22px; }
+    .cover h2 { font-size: 13px; }
+
+    .doc-info { padding: 12px 20px; gap: 14px; flex-direction: column; }
+
+    .body { padding: 24px 20px; }
+
+    .section-title { font-size: 10px; }
+    p.text { font-size: 13px; }
+
+    .planos-grid { grid-template-columns: 1fr; }
+    .plano-sigla { font-size: 28px; }
+
+    .glossario-grid { grid-template-columns: 1fr; }
+
+    .tbl-wrap { font-size: 11.5px; }
+    th { font-size: 10px; padding: 8px 10px; }
+    td { padding: 8px 10px; font-size: 11.5px; }
+
+    .step-num { min-width: 28px; height: 28px; font-size: 12px; }
+    .step-titulo { font-size: 12.5px; }
+    .step-desc { font-size: 12px; }
+    .step-sub { font-size: 12px; }
+    .step-line { margin-left: 13px; }
+
+    .exemplo-header { font-size: 10px; padding: 9px 14px; }
+    .exemplo-body { padding: 14px; }
+    .exemplo-grid { grid-template-columns: 1fr; }
+    .exemplo-label { min-width: 74px; font-size: 9px; }
+    .exemplo-valor { font-size: 12px; }
+
+    .highlight-box { flex-direction: column; gap: 4px; padding: 14px 16px; }
+    .highlight-box .value { font-size: 18px; }
+
+    .doc-footer { padding: 14px 20px; flex-direction: column; align-items: flex-start; gap: 6px; }
+    .doc-footer img { height: 24px; }
+    .doc-footer span { font-size: 10px; }
+
+    .toc { padding: 14px 16px; }
+    .toc li { font-size: 12px; }
+
+    .callout { font-size: 12px; }
+    .tag { font-size: 10px; padding: 2px 8px; }
+    .resultado { font-size: 11px; }
+    .glossario-def { font-size: 12px; }
+  }
+
+  /* PRINT */
+  @media print {
+    body { background: #fff; font-size: 12px; }
+    .print-bar { display: none !important; }
+    .page { margin: 0; max-width: 100%; box-shadow: none; border-radius: 0; }
+    .cover, th, tr.row-blue td, tr.row-green td, tr.row-gold td, tr.row-red td,
+    .highlight-box, .doc-footer, .callout, .plano-card-header, .doc-info {
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+    .section { page-break-inside: avoid; }
+    .exemplo-box, .step, .plano-card, .glossario-item { page-break-inside: avoid; }
+    .step-sub { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .planos-grid, .exemplo-grid, .glossario-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="print-bar">
+  <span>UniFECAF — Normativa Financeira Acadêmica · V1.0 · 2026</span>
+  <button class="btn-print" onclick="window.print()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/>
+      <rect x="6" y="14" width="12" height="8" rx="1"/>
+    </svg>
+    Imprimir / Salvar PDF
+  </button>
+</div>
+
+<div class="page">
+
+  <!-- COVER: logo branco sem fundo sobre fundo azul escuro -->
+  <div class="cover">
+    <div class="cover-top">
+      <img class="cover-logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAyAAAADmCAYAAAAtKeFcAABHLklEQVR42u3dd3hVVaI28HedkoR0AiEQQEoUBTGhK1VKCChDCQiEgCIzDjgFufbR+1nQ0cvMyIxl1BlGKY5KkV5EQMaC9FAEpSlVegglPTln7/X9oWvPSQxwkuzT39/z5Ln3zmVO2Wfvtda7KkBEREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREFGBEqH5xi8UCi8XCOyDAaJoGKSUvBBEREREFVvgg/n5ERERE5H0hNwJitVqhaRpuvPFG9OnTR9apUwdSSggheDf4KSklLBYLLl68iI8//ljk5eVBCMGRECIiIiLybzabDQCQlZUlCwsLJQWeo0ePytatW0shBEdCiIiIiAJQyHT72+12OBwOjB49Ws6bNw8A4HA4OPIRQDRNQ3h4OFauXInBgwcLNZpFRERERIHDFhJf0maDw+HAyJEj5Ycffghd141QQoHDYrFA13WkpaUZgZJTsYiIiIgCrE0XCuHD6XRi+PDhct68ecaIB6fvBB5d12GxWHD06FE4nU5YLBaGDyIiIiLyH2qEY9iwYdLhcEhd16WmaVxIEYDU71ZSUiK7desmgR83FCAiIiIi8gtqwfmQIUNkeXk5w0eQhI8BAwZIgCNYREREROSH4WPQoEEMH0EYPtTvS0RERETkN+HjrrvukqWlpQwfDB9ERERERJ4NHxkZGbK0tLRCI5YCP3xw1zIiIiIi8rvw0b9/f1lSUsLwwZEPIiIiIiLPho++ffvKoqIihg+GDyIiIiIiz4aPO++8k+GD4YOIiIiIyPPho1evXrKgoIDhg+GDiIiIiMgz1DkQ3bt3l1euXGH4CJLwkZGR4ZHwYbFYIITgg0NERERENQ8f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ERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERedb/BxnObz8rFKbIAAAAAElFTkSuQmCC" alt="UniFECAF"/>
+      <div class="cover-meta">
+        <span class="cover-badge">Documento Interno · Uso Restrito</span>
+        <div class="cover-meta-info">Financeiro — Cobrança<br/>Versão 1.0 &nbsp;|&nbsp; Maio / 2026</div>
+      </div>
+    </div>
+    <div class="cover-content">
+      <div class="cover-eyebrow">Normativa Interna · Financeiro &amp; Acadêmico</div>
+      <h1>Planos de Pagamento<br>e Trancamento de Matrícula</h1>
+      <h2>Manual operacional para classificação de débitos e análise de mensalidades em solicitações de trancamento</h2>
+      <div class="cover-accent"></div>
+    </div>
+  </div>
+
+  <!-- FAIXA DE AUTORIA -->
+  <div class="doc-info">
+    <div class="doc-info-item">
+      <span class="doc-info-label">Elaborado por</span>
+      <span class="doc-info-value">Alexsander Ferreira da Silva</span>
+    </div>
+    <div class="doc-info-item">
+      <span class="doc-info-label">Setor</span>
+      <span class="doc-info-value">Financeiro — Cobrança</span>
+    </div>
+    <div class="doc-info-item">
+      <span class="doc-info-label">Data de emissão</span>
+      <span class="doc-info-value">28/05/2026</span>
+    </div>
+  </div>
+
+  <div class="body">
+
+    <!-- TOC -->
+    <div class="toc">
+      <div class="toc-title">&#128203; Sumário</div>
+      <ol>
+        <li><a href="#sec1">Glossário de termos</a> <span>— definições essenciais</span></li>
+        <li><a href="#sec2">Planos de pagamento: ANT e PST</a> <span>— definições, fluxos e diferenças</span></li>
+        <li><a href="#sec3">Regras de trancamento de matrícula</a> <span>— prazo, condições e consequências</span></li>
+        <li><a href="#sec4">Passo a passo operacional</a> <span>— cruzamento de trancamentos × débitos</span></li>
+        <li><a href="#sec5">Tabela de referência rápida</a> <span>— consulta consolidada por cenário</span></li>
+        <li><a href="#sec6">Exemplos práticos detalhados</a> <span>— casos reais simulados</span></li>
+      </ol>
+    </div>
+
+    <!-- 1. GLOSSÁRIO -->
+    <div class="section" id="sec1">
+      <div class="section-title"><span class="num">1</span> Glossário de Termos</div>
+      <p class="text">Para garantir o correto entendimento por todos os setores, apresentamos os principais termos utilizados neste documento:</p>
+      <div class="glossario-grid">
+        <div class="glossario-item"><div class="glossario-termo">Plano ANT (Antecipado)</div><p class="glossario-def">Modalidade em que o aluno realiza o pagamento <strong>antes</strong> de usufruir do período letivo. O serviço é liberado após a quitação.</p></div>
+        <div class="glossario-item"><div class="glossario-termo">Plano PST (Postecipado)</div><p class="glossario-def">Modalidade em que o aluno usufrui do período letivo e realiza o pagamento <strong>após</strong> a fruição do serviço educacional.</p></div>
+        <div class="glossario-item"><div class="glossario-termo">Trancamento de Matrícula</div><p class="glossario-def">Suspensão formal e temporária do vínculo acadêmico, com interrupção das atividades letivas e financeiras futuras.</p></div>
+        <div class="glossario-item"><div class="glossario-termo">Data Limite de Trancamento</div><p class="glossario-def">Dia <strong>10 de cada mês</strong> — prazo máximo para abertura da solicitação dentro do período regulamentar.</p></div>
+        <div class="glossario-item"><div class="glossario-termo">Mensalidade Devida</div><p class="glossario-def">Parcela que o aluno tem obrigação de pagar, pois o serviço educacional foi ou será devidamente prestado no período.</p></div>
+        <div class="glossario-item"><div class="glossario-termo">Mensalidade Indevida</div><p class="glossario-def">Parcela que não deve ser cobrada ou deve ser estornada, pois não há contraprestação de serviço no período.</p></div>
+        <div class="glossario-item"><div class="glossario-termo">Débito em Aberto</div><p class="glossario-def">Mensalidade ou taxa gerada no sistema ainda não quitada pelo aluno na data de verificação.</p></div>
+        <div class="glossario-item"><div class="glossario-termo">Estorno / Cancelamento</div><p class="glossario-def">Ato formal de cancelar ou reverter uma cobrança indevida no sistema financeiro, zerando o débito correspondente.</p></div>
+      </div>
+    </div>
+
+    <hr class="divider"/>
+
+    <!-- 2. PLANOS -->
+    <div class="section" id="sec2">
+      <div class="section-title"><span class="num">2</span> Planos de Pagamento: ANT e PST</div>
+      <p class="text">A UniFECAF opera com dois modelos distintos de plano de pagamento. A correta identificação do plano de cada aluno é <strong>fundamental</strong> para todas as análises financeiras, especialmente em situações de trancamento.</p>
+      <div class="planos-grid">
+        <div class="plano-card">
+          <div class="plano-card-header ant">
+            <div class="plano-sigla">ANT</div>
+            <div class="plano-nome">Plano Antecipado</div>
+          </div>
+          <div class="plano-card-body">
+            <div class="plano-definicao">O aluno paga primeiro, depois estuda.</div>
+            <div class="plano-fluxo"><span class="fluxo-passo">&#128179; Pagamento</span><span class="fluxo-seta">&#8594;</span><span class="fluxo-passo">&#128218; Acesso / Estudo</span></div>
+            <ul>
+              <li>A mensalidade é gerada e deve ser paga <strong>antes</strong> do início do período letivo.</li>
+              <li>O acesso às aulas é condicionado à quitação da mensalidade do mês.</li>
+              <li>Ao pagar, o aluno "compra" o direito de estudar naquele período.</li>
+              <li>Solicitação <strong>até dia 10</strong>: mensalidade do mês corrente é <strong>indevida</strong> — cancelar se não paga. Solicitação <strong>após dia 10</strong>: se já paga, mantém; se não paga, é <strong>indevida</strong> — cancelar.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="plano-card">
+          <div class="plano-card-header pst">
+            <div class="plano-sigla">PST</div>
+            <div class="plano-nome">Plano Postecipado</div>
+          </div>
+          <div class="plano-card-body">
+            <div class="plano-definicao">O aluno estuda primeiro, depois paga.</div>
+            <div class="plano-fluxo"><span class="fluxo-passo">&#128218; Acesso / Estudo</span><span class="fluxo-seta">&#8594;</span><span class="fluxo-passo">&#128179; Pagamento</span></div>
+            <ul>
+              <li>O aluno tem acesso às aulas antes de efetuar o pagamento.</li>
+              <li>A mensalidade é gerada <strong>após</strong> a prestação do serviço no período.</li>
+              <li>A cobrança representa a contraprestação pelo serviço <em>já usufruído</em>.</li>
+              <li>A mensalidade do mês da solicitação é <strong>sempre devida</strong> (corresponde ao mês anterior, já usufruído). Se a solicitação passar do dia 10, a parcela do mês <strong>seguinte</strong> também será devida.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="callout"><strong>&#9888;&#65039; Como identificar o plano do aluno?</strong> Sempre consulte o sistema acadêmico-financeiro antes de qualquer análise. Em caso de dúvida, acione o setor responsável antes de realizar qualquer cancelamento ou estorno.</div>
+    </div>
+
+    <hr class="divider"/>
+
+    <!-- 3. TRANCAMENTO -->
+    <div class="section" id="sec3">
+      <div class="section-title"><span class="num">3</span> Regras de Trancamento de Matrícula</div>
+      <p class="text"><strong>Data limite:</strong> todo pedido de trancamento deve ser formalizado até o <strong>dia 10 de cada mês</strong>. Esta data é o marco regulatório que determina o prazo e tem impacto direto sobre a análise das mensalidades em aberto.</p>
+      <div class="callout gold">
+        <strong>&#128197; Regra de ouro — Dia 10 de cada mês (válida para ANT e PST)</strong><br/>
+        Solicitações abertas <strong>até o dia 10</strong> (inclusive) = dentro do prazo.<br/>
+        Solicitações abertas <strong>a partir do dia 11</strong> = fora do prazo.<br/>
+        Esta data de corte impacta diretamente quais mensalidades são devidas ou indevidas em <strong>ambos os planos</strong>.
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr><th>#</th><th>Plano</th><th class="left">Data da Solicitação</th><th>Prazo</th><th>Mês Corrente</th><th>Meses Seguintes</th><th class="left">Justificativa</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>A</strong></td><td><span class="tag ant">ANT</span></td><td class="left">Até dia 10</td><td><span class="tag check">Dentro do prazo</span></td><td><span class="tag indevida">INDEVIDA</span></td><td><span class="tag indevida">INDEVIDAS</span></td><td class="left">Solicitou no prazo; o serviço do mês corrente não será prestado.</td></tr>
+            <tr><td><strong>B</strong></td><td><span class="tag ant">ANT</span></td><td class="left">A partir do dia 11</td><td><span class="tag devida">Fora do prazo</span></td><td><span class="tag prazo">SE JÁ PAGA: manter / SE NÃO PAGA: indevida</span></td><td><span class="tag indevida">INDEVIDAS</span></td><td class="left">Se já pagou: manter (estorno só se reclamar). Se não pagou: cancelar.</td></tr>
+            <tr><td><strong>C</strong></td><td><span class="tag pst">PST</span></td><td class="left">Até dia 10</td><td><span class="tag check">Dentro do prazo</span></td><td><span class="tag devida">DEVIDA</span></td><td><span class="tag indevida">INDEVIDAS</span></td><td class="left">Vencimento do mês corrente refere-se ao mês anterior estudado — sempre devido.</td></tr>
+            <tr><td><strong>D</strong></td><td><span class="tag pst">PST</span></td><td class="left">A partir do dia 11</td><td><span class="tag devida">Fora do prazo</span></td><td><span class="tag devida">DEVIDA</span></td><td><span class="tag devida">PRÓXIMO DEVIDO</span></td><td class="left">Mês corrente devido (mês anterior estudado) + próximo mês também devido (teve acesso após dia 10).</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout green"><strong>&#128161; Lógica do PST:</strong> o aluno paga pelo que JÁ usufruiu. O vencimento do mês da solicitação é <strong>sempre devido</strong> pois corresponde ao mês anterior já estudado. Se a solicitação ocorrer após o dia 10, a parcela do mês <strong>seguinte</strong> também será devida, pois o aluno teve acesso à plataforma naquele período.</div>
+      <div class="callout"><strong>&#128161; Lógica do ANT:</strong> o aluno paga pelo que VAI usufruir. A data de corte do <strong>dia 10</strong> se aplica da seguinte forma: solicitou <strong>até o dia 10</strong>, o mês corrente é <strong>indevido</strong> — cancelar se não paga. Solicitou <strong>após o dia 10</strong>: se o aluno <strong>já pagou</strong>, a parcela é mantida (mas pode ser estornada mediante reclamação); se <strong>não pagou</strong>, a parcela é <strong>indevida</strong> — cancelar no sistema.</div>
+    </div>
+
+    <hr class="divider"/>
+
+    <!-- 4. PASSO A PASSO -->
+    <div class="section" id="sec4">
+      <div class="section-title"><span class="num">4</span> Passo a Passo Operacional</div>
+      <p class="text">Procedimento padronizado para análise de débitos de alunos com solicitação de trancamento. Siga as etapas <strong>na ordem apresentada</strong>.</p>
+      <div class="steps">
+        <div class="step"><div class="step-num">1</div><div class="step-body"><div class="step-titulo">Localizar e confirmar a solicitação de trancamento</div><p class="step-desc">Acesse o sistema acadêmico e verifique se existe uma solicitação formalmente protocolada. Confirme número de protocolo, data/hora de abertura e status ativo ou aprovado.</p><div class="step-sub ant">&#10004; Verifique se o trancamento é parcial (disciplinas) ou total (semestre/período).<br/>&#10004; Confirme que a solicitação não foi cancelada pelo próprio aluno.</div></div></div>
+        <div class="step-line"></div>
+        <div class="step"><div class="step-num">2</div><div class="step-body"><div class="step-titulo">Registrar a data exata da solicitação</div><p class="step-desc">Anote a data completa (dia, mês e ano) em que o aluno abriu o pedido. Esta é o ponto de corte para toda análise financeira.</p><div class="step-sub pst">&#9888; Use sempre a data de <strong>abertura do protocolo</strong>, não a data de aprovação ou efetivação do trancamento pelo setor acadêmico.</div></div></div>
+        <div class="step-line"></div>
+        <div class="step"><div class="step-num">3</div><div class="step-body"><div class="step-titulo">Verificar se a solicitação está dentro ou fora do prazo</div><p class="step-desc">Compare o dia da solicitação com o dia 10 do mês correspondente:</p><div class="step-sub ant">&#128197; <strong>Até dia 10 (inclusive)</strong> → Solicitação DENTRO DO PRAZO<br/>&#128197; <strong>A partir do dia 11</strong> → Solicitação FORA DO PRAZO<br/>Esta distinção é válida para <strong>ambos os planos</strong> — ANT e PST — e define diretamente quais mensalidades são devidas ou indevidas.</div></div></div>
+        <div class="step-line"></div>
+        <div class="step"><div class="step-num">4</div><div class="step-body"><div class="step-titulo">Identificar o tipo de plano do aluno (ANT ou PST)</div><p class="step-desc">Consulte o cadastro financeiro do aluno no sistema para confirmar a modalidade de pagamento vinculada ao contrato. Este dado é imprescindível para a próxima etapa.</p></div></div>
+        <div class="step-line"></div>
+        <div class="step"><div class="step-num">5</div><div class="step-body"><div class="step-titulo">Aplicar a regra financeira conforme plano e prazo</div><p class="step-desc">Com base nas informações das etapas 3 e 4, aplique a regra correspondente:</p><div class="step-sub ant"><strong>Plano ANT:</strong><br/>— Solicitação <strong>até o dia 10</strong>: mensalidade do mês corrente é <strong>INDEVIDA</strong> — cancelar se não paga. Meses seguintes também são <strong>INDEVIDOS</strong>.<br/>— Solicitação <strong>após o dia 10</strong>: verificar se o mês corrente foi pago.<br/>&nbsp;&nbsp;&nbsp;• <strong>Já pagou</strong>: manter o débito quitado; realizar estorno somente mediante reclamação formal do aluno.<br/>&nbsp;&nbsp;&nbsp;• <strong>Não pagou</strong>: parcela é <strong>INDEVIDA</strong> — cancelar no sistema.<br/>— Meses seguintes: sempre <strong>INDEVIDOS</strong> em qualquer caso.</div><div class="step-sub pst" style="margin-top:8px;"><strong>Plano PST:</strong><br/>— O vencimento do mês da solicitação é <strong>SEMPRE DEVIDO</strong> (corresponde ao mês anterior estudado).<br/>— Solicitação <strong>até o dia 10</strong>: meses seguintes são <strong>INDEVIDOS</strong>.<br/>— Solicitação <strong>após o dia 10</strong>: parcela do mês <strong>seguinte também é DEVIDA</strong> (aluno teve acesso à plataforma). A partir daí, indevido.</div></div></div>
+        <div class="step-line"></div>
+        <div class="step"><div class="step-num">6</div><div class="step-body"><div class="step-titulo">Listar e classificar todos os débitos em aberto</div><p class="step-desc">Extraia do sistema a lista completa de parcelas em aberto. Para cada parcela, aplique: <strong>DEVIDA</strong> (manter) ou <strong>INDEVIDA</strong> (cancelar/estornar), usando a data de corte da etapa anterior.</p></div></div>
+        <div class="step-line"></div>
+        <div class="step"><div class="step-num">7</div><div class="step-body"><div class="step-titulo">Executar o cancelamento ou estorno das parcelas indevidas</div><p class="step-desc">Proceda com o cancelamento no sistema financeiro. Se já houver pagamento indevido, emita o estorno formal.</p><div class="step-sub ant">&#9888; Exige autorização do responsável financeiro. Registre motivo, data e nome do responsável para auditoria.</div></div></div>
+        <div class="step-line"></div>
+        <div class="step"><div class="step-num">8</div><div class="step-body"><div class="step-titulo">Atualizar o cadastro e comunicar o resultado ao aluno</div><p class="step-desc">Atualize o status financeiro no sistema com todas as ações, data, responsável e justificativa. Se houver valores a devolver ou créditos, comunique o aluno pelo canal oficial.</p></div></div>
+      </div>
+    </div>
+
+    <hr class="divider"/>
+
+    <!-- 5. REFERÊNCIA RÁPIDA -->
+    <div class="section" id="sec5">
+      <div class="section-title"><span class="num">5</span> Tabela de Referência Rápida</div>
+      <p class="text">Consulta rápida para uso durante a operação. Cruzando plano com data de solicitação, identifique imediatamente o tratamento financeiro correto.</p>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr><th>Plano</th><th class="left">Data da Solicitação</th><th>Prazo</th><th>Mês Corrente</th><th>Meses Seguintes</th><th class="left">Ação no Sistema</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><span class="tag ant">ANT</span></td><td class="left">Até o dia 10</td><td><span class="tag check">Dentro do prazo</span></td><td><span class="tag indevida">INDEVIDA</span></td><td><span class="tag indevida">INDEVIDAS</span></td><td class="left">Cancelar mês corrente e todos os seguintes</td></tr>
+            <tr class="row-blue"><td><span class="tag ant">ANT</span></td><td class="left">A partir do dia 11</td><td><span class="tag devida">Fora do prazo</span></td><td>Se paga: manter<br/>Se não paga: <span class="tag indevida">INDEVIDA</span></td><td><span class="tag indevida">INDEVIDAS</span></td><td class="left">Já paga: manter (estorno se reclamar). Não paga: cancelar</td></tr>
+            <tr><td><span class="tag pst">PST</span></td><td class="left">Até o dia 10</td><td><span class="tag check">Dentro do prazo</span></td><td><span class="tag devida">DEVIDA</span></td><td><span class="tag indevida">INDEVIDAS</span></td><td class="left">Manter mês corrente (ref. mês anterior); cancelar seguintes</td></tr>
+            <tr class="row-blue"><td><span class="tag pst">PST</span></td><td class="left">A partir do dia 11</td><td><span class="tag devida">Fora do prazo</span></td><td><span class="tag devida">DEVIDA</span></td><td><span class="tag devida">PRÓXIMO DEVIDO</span></td><td class="left">Manter mês corrente + próximo mês; cancelar demais</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout red"><strong>&#128683; Erros comuns a evitar:</strong> o dia 10 é critério de corte para <strong>ambos os planos</strong>. No ANT fora do prazo, não cancele automaticamente o mês corrente sem antes verificar se o aluno <strong>já pagou</strong> — se pagou, apenas estorne mediante reclamação; se não pagou, cancele. No PST, o vencimento do mês da solicitação é <strong>sempre devido</strong> pois representa o mês anterior estudado.</div>
+    </div>
+
+    <hr class="divider"/>
+
+    <!-- 6. EXEMPLOS -->
+    <div class="section" id="sec6">
+      <div class="section-title"><span class="num">6</span> Exemplos Práticos Detalhados</div>
+      <p class="text">Os exemplos a seguir simulam situações reais para consolidar a aplicação das regras deste documento.</p>
+
+      <div class="exemplo-box">
+        <div class="exemplo-header">&#128203; Exemplo 1 — Plano ANT · Solicitação em 19/05/2026 (fora do prazo)</div>
+        <div class="exemplo-body">
+          <div class="exemplo-linha"><span class="exemplo-label">Aluno</span><span class="exemplo-valor">João Paulo Silva</span></div>
+          <div class="exemplo-linha"><span class="exemplo-label">Plano</span><span class="exemplo-valor"><span class="tag ant">ANT — Antecipado</span></span></div>
+          <div class="exemplo-linha"><span class="exemplo-label">Data Solicit.</span><span class="exemplo-valor">19/05/2026 — dia 19, após o dia 10 = fora do prazo</span></div>
+          <div class="exemplo-linha"><span class="exemplo-label">Situação</span><span class="exemplo-valor">Solicitação após o dia 10. No plano ANT, o mês corrente é devido pois o aluno já tinha acesso. Mensalidades de jun/2026 em diante são indevidas.</span></div>
+          <div class="exemplo-grid">
+            <div class="exemplo-card ant"><div class="exemplo-card-titulo">Mensalidade de Maio/2026</div><p>Solicitação após o dia 10 — verificar se o aluno já pagou esta parcela.</p><p>&#10004; <strong>Se já pagou:</strong> manter. Estornar somente se o aluno solicitar formalmente.</p><p>&#10006; <strong>Se não pagou:</strong> parcela indevida — cancelar no sistema.</p><div class="resultado verificar">&#9888;&#65039; Verificar se foi paga antes de agir</div></div>
+            <div class="exemplo-card ant"><div class="exemplo-card-titulo">Mensalidades de Jun/2026 em diante</div><p>O aluno não terá acesso nos meses seguintes ao trancamento.</p><p>Não há contraprestação de serviço — cobrança sem fundamento.</p><div class="resultado indevida">&#10003; INDEVIDAS — Cancelar no sistema</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="exemplo-box">
+        <div class="exemplo-header">&#128203; Exemplo 2 — Plano PST · Solicitação em 19/05/2026 (fora do prazo)</div>
+        <div class="exemplo-body">
+          <div class="exemplo-linha"><span class="exemplo-label">Aluno</span><span class="exemplo-valor">Maria Fernanda Costa</span></div>
+          <div class="exemplo-linha"><span class="exemplo-label">Plano</span><span class="exemplo-valor"><span class="tag pst">PST — Postecipado</span></span></div>
+          <div class="exemplo-linha"><span class="exemplo-label">Data Solicit.</span><span class="exemplo-valor">19/05/2026 — dia 19, após o dia 10 = fora do prazo</span></div>
+          <div class="exemplo-linha"><span class="exemplo-label">Situação</span><span class="exemplo-valor">Aluna estudou durante todo abril (paga em maio) e teve acesso em maio após o dia 10. Mensalidade de maio não paga. Mensalidade de junho não gerada.</span></div>
+          <div class="exemplo-grid">
+            <div class="exemplo-card pst"><div class="exemplo-card-titulo">Mensalidade de Maio/2026</div><p>No PST, o vencimento de maio refere-se ao mês de abril já estudado.</p><p>Sempre devida, independentemente da data de solicitação.</p><div class="resultado devida">&#10060; DEVIDA — Manter no sistema</div></div>
+            <div class="exemplo-card pst"><div class="exemplo-card-titulo">Mensalidade de Junho/2026</div><p>Solicitação após o dia 10: a aluna teve acesso à plataforma em maio após o corte.</p><p>O mês de junho (que corresponde ao acesso de maio) também é devido.</p><div class="resultado devida">&#10060; DEVIDA — Manter no sistema</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="exemplo-box">
+        <div class="exemplo-header">&#128203; Exemplo 3 — Plano PST · Solicitação em 07/05/2026 (dentro do prazo)</div>
+        <div class="exemplo-body">
+          <div class="exemplo-linha"><span class="exemplo-label">Aluno</span><span class="exemplo-valor">Carlos Eduardo Mendes</span></div>
+          <div class="exemplo-linha"><span class="exemplo-label">Plano</span><span class="exemplo-valor"><span class="tag pst">PST — Postecipado</span></span></div>
+          <div class="exemplo-linha"><span class="exemplo-label">Data Solicit.</span><span class="exemplo-valor">07/05/2026 — dia 07, até o dia 10 = dentro do prazo</span></div>
+          <div class="exemplo-linha"><span class="exemplo-label">Situação</span><span class="exemplo-valor">Aluno estudou em abril (paga em maio) e solicitou trancamento antes do dia 10 de maio. Mensalidade de maio ainda não gerada.</span></div>
+          <div class="exemplo-grid">
+            <div class="exemplo-card pst"><div class="exemplo-card-titulo">Mensalidade de Maio/2026</div><p>No PST, o vencimento de maio refere-se ao mês de abril já estudado.</p><p>Sempre devida — o aluno estudou em abril independentemente do trancamento.</p><div class="resultado devida">&#10060; DEVIDA — Gerar e manter no sistema</div></div>
+            <div class="exemplo-card pst"><div class="exemplo-card-titulo">Mensalidades de Jun/2026 em diante</div><p>Solicitação dentro do prazo (antes do dia 10): o aluno não teve acesso em maio após o corte.</p><p>Nenhuma cobrança futura deve ser gerada.</p><div class="resultado indevida">&#10003; INDEVIDAS — Não gerar cobranças</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="exemplo-box">
+        <div class="exemplo-header">&#128203; Exemplo 4 — Plano ANT · Solicitação em 07/05/2026 (dentro do prazo)</div>
+        <div class="exemplo-body">
+          <div class="exemplo-linha"><span class="exemplo-label">Aluno</span><span class="exemplo-valor">Rafael Augusto Mota</span></div>
+          <div class="exemplo-linha"><span class="exemplo-label">Plano</span><span class="exemplo-valor"><span class="tag ant">ANT — Antecipado</span></span></div>
+          <div class="exemplo-linha"><span class="exemplo-label">Data Solicit.</span><span class="exemplo-valor">07/05/2026 — dia 07, até o dia 10 = dentro do prazo</span></div>
+          <div class="exemplo-linha"><span class="exemplo-label">Situação</span><span class="exemplo-valor">Aluno solicitou trancamento antes do dia 10. A mensalidade de maio/2026 ainda não foi paga.</span></div>
+          <div class="exemplo-grid">
+            <div class="exemplo-card ant"><div class="exemplo-card-titulo">Mensalidade de Maio/2026</div><p>Solicitação dentro do prazo (antes do dia 10). O serviço do mês corrente não será prestado.</p><p>No plano ANT, isso torna a mensalidade do mês corrente <strong>indevida</strong>.</p><div class="resultado indevida">&#10003; INDEVIDA — Cancelar / não cobrar</div></div>
+            <div class="exemplo-card ant"><div class="exemplo-card-titulo">Mensalidades de Jun/2026 em diante</div><p>O aluno não terá acesso nos meses seguintes ao trancamento.</p><p>Nenhuma cobrança futura deve ser gerada.</p><div class="resultado indevida">&#10003; INDEVIDAS — Não gerar cobranças</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="highlight-box">
+        <div>
+          <div class="label">Dia 10 é o corte para ambos os planos</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:3px;">ANT: dia 10 define se o mês corrente é devido &nbsp;|&nbsp; PST: vencimento corrente sempre devido + dia 10 define o mês seguinte</div>
+        </div>
+        <div class="value">ANT &#8800; PST</div>
+      </div>
+    </div>
+
+  </div><!-- /body -->
+
+  <!-- FOOTER: logo branco sem fundo sobre azul escuro -->
+  <div class="doc-footer">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAyAAAADmCAYAAAAtKeFcAABHLklEQVR42u3dd3hVVaI28HedkoR0AiEQQEoUBTGhK1VKCChDCQiEgCIzDjgFufbR+1nQ0cvMyIxl1BlGKY5KkV5EQMaC9FAEpSlVegglPTln7/X9oWvPSQxwkuzT39/z5Ln3zmVO2Wfvtda7KkBEREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREFGBEqH5xi8UCi8XCOyDAaJoGKSUvBBEREREFVvgg/n5ERERE5H0hNwJitVqhaRpuvPFG9OnTR9apUwdSSggheDf4KSklLBYLLl68iI8//ljk5eVBCMGRECIiIiLybzabDQCQlZUlCwsLJQWeo0ePytatW0shBEdCiIiIiAJQyHT72+12OBwOjB49Ws6bNw8A4HA4OPIRQDRNQ3h4OFauXInBgwcLNZpFRERERIHDFhJf0maDw+HAyJEj5Ycffghd141QQoHDYrFA13WkpaUZgZJTsYiIiIgCrE0XCuHD6XRi+PDhct68ecaIB6fvBB5d12GxWHD06FE4nU5YLBaGDyIiIiLyH2qEY9iwYdLhcEhd16WmaVxIEYDU71ZSUiK7desmgR83FCAiIiIi8gtqwfmQIUNkeXk5w0eQhI8BAwZIgCNYREREROSH4WPQoEEMH0EYPtTvS0RERETkN+HjrrvukqWlpQwfDB9ERERERJ4NHxkZGbK0tLRCI5YCP3xw1zIiIiIi8rvw0b9/f1lSUsLwwZEPIiIiIiLPho++ffvKoqIihg+GDyIiIiIiz4aPO++8k+GD4YOIiIiIyPPho1evXrKgoIDhg+GDiIiIiMgz1DkQ3bt3l1euXGH4CJLwkZGR4ZHwYbFYIITgg0NERERENQ8fnTp1YvjgyEe1ggdPTyciIiKiGjUqLRYLtmzZIqWU0uFwsCXP8HHVoAoATZs2RVxcHB8eIiIiIqoe1Ztdr149XL58Weq6LnVdZ2ue064qUK916623yi+//FIWFhbK06dPy2eeeUZWDidERERERNcNIPXr18fFixellJIBJEDDR3FxsUfDR2pqqjx79uzP3n/ChAlc5E5ERETkIwHdDcxFxYFH13VYLBaUlpZi2LBhWLt2rbDZbHA6naaFD6fTidTUVLl27VokJSUZr+1wOKBpGkaOHAkAkFLyByEiIiJiAKFQCB9Dhw71SvjQNM0Y6bBYLLBarcb/zQBCRERExABCDB+mhg/uekVERETkXzgJnjxOBQFvhI81a9YwfBAR0c8IIYw/9X9fjRohl1Iaf0TEAOL1BjTw4xQeFkLVK+yllF4LHxz5ICIiVV+rsCGlhKZptQ4SVqvVeD0pJXRd54UmYgDxDNWAdm1UU/VCyJEjRzBx4kSsX7+e4eMa16km91Yg9MzV9LsFyvcj9xqDauvrYPo9a9IIDZZroeu6X31+IYQROpxOZ5W/S1xcHBITE1GvXj1Zt25dxMbGIjo6GmFhYca/KSsrQ2FhIfLz83Hp0iVcuHBBXLhwAfn5+UZnZOV6SN0HgfR7evI+rOo6+dP9EUxlkD9eawYQkyoXIQQWLFiA9957D1euXOFFqea1czqd2Lt3rygqKoLVamX4qKICMKNnzh+p30J9PwrN4KEaq6HeW6waQJqmsefc5GuqyhnXxljz5s3Rrl072a5dO6SmpqJFixZITk5GQkJCtbZgdzgc8uLFizh9+jQOHz6MPXv2YPfu3dizZ484fvx4hTpNlXn+HEZC7Zl0fe4CubEejBhArpEqrVYrZs+ejQkTJnDYw4RCz6yHP9DDR1UNkfr16yMhIQFhYWFu1VpSSlgsFpw9e1bk5ub6Va+OGvFQv3d4eDgaNWqE6Ohotz+gCrAnT54Uly9fDrpeK1+HXnWNXX8zsxslVqvVuAdat24t+/fvj7S0NCQmJgb8SLLaXW/JkiV49913het3vda10DQNycnJ6Nevn+zUqROaNm0Ku90ekN99+vTp+Oyzz6773T1VxqgOLfXesbGx6NGjh8zIyECvXr3QunVrREREXLV8Ufd5VeWK61oRu92OpKQkJCUloX379rjnnnsAAMXFxXL//v344osvsHbtWmzatEkUFBRUqKf8rfPF9bdq06aN7Nu3L1JTU5GUlFTrw3l1XYfVasWxY8cwefJk4Q/f22KxQNd1aJqGBg0aoG/fvrJLly644YYbEBEREbB1iqofCwoKMGnSJFFQUMA60lsFj2qwXbp0yWMHEeq6LjVNk7feequ0WCwICwuD1WrlXw3+zGxsVHXIoNPpdOs3Vf9u7dq1PjsN3fU9b7rpJjz//PNy8+bN8uLFi25/D9fDHJ944gm/OlTR9fv16tVLzp49Wx45ckSWlpbW6LDKe++9l4dGmtTwcPd+V4272r6fusfnz58vy8vLg/JQ1TfffPO696e6Fo0bN8Zbb70lVb0V6HxxoGvle9Nms6F///7y3XfflSdPnqyyzHc4HNLpdEpN06Su69VuL6j/jqZpFV6vshMnTsh//vOfsk+fPtK1zrPZbH4RuNXz36VLF7l8+XLpcDg8dm+kpqb6rI6t/NzVq1cPr7zyiszNzQ268qe8vFwmJCRUaBsHEtbq10iX5eXlyM/PF7quX3VOKXnxZg3wkQ/V+xQdHY2pU6fKBx98EJGRkTXubfK3TRFUb1N8fDxef/11ee+999aqN42bPpjTYHMdjWrWrBnuuOMOmZaWhqZNm6JOnTooLy/HmTNnsHfvXmzZsgUHDhwQmqYZ17+6v4G6zwcPHiznzJmDunXrAoAxVSUY1tE5nU7YbDYUFxe7dS0GDRok33nnHTRs2NAYRVD1TKB+9/Lycq/ex67TaBITEzFu3Dh5//33IzU1tUK5ocoOM4K06/1a+bdyXYhusVjQtGlTTJw4ERMnTsTOnTvlzJkz8eGHH4pLly79bPTBV3XPE088IV966SUjNJr9TDqdTtjtdmRlZWHPnj1GneCr79uzZ085Z84ctGjRIuCfu6raqJcuXWId6e0KFfDsCIh6vdLSUtmsWTP4OsnTf3vZ0tLSqj3y4Q8jIOq9brrpJuzatcv4TA6Ho0Y9c6r36vHHH/eLEQL1/Ro2bIjdu3cboxiu36861PcbN24cR0BqWVYCQO/eveXSpUtlYWHhdXvU1q9fL4cOHSor/7bV6XVMT083njdP9rT6ivpO06dPv+r9qa7FiBEjjPvf4XB4ZMTeF9/dW8+ma4hISkrCiy++KM+cOVNhtNTpdPr8uuq6/rPf98SJE/Kpp56S8fHxFYKUtxvjADBt2jTjc1a37qzuyPWhQ4ek3W73SUNfXd9+/frJkpISo1wL9OeuqjbqhQsXpOrg4QZJQRhAbrjhBgaQIAgfvgwg6n2aN2+OEydOmFIg+lMAUZVqWFgYNm3aZHy/QGrkBBt1z0VGRmLGjBlVTktRU0lc/3dXCxculImJiW6Xf2q0JTExEbV5ToMhgKjr1bZtW1lcXOzRRl+wBhDXEYyIiAg89thjFYKH6tzwRyoUKceOHZOTJk0ypmZ5qzxT1+/+++/3WkNc/SZ9+vSRlQOkN8o9IQSaNWuGvLy8oC2DgiWAsFVNfh8+nE4n0tLSAvKQQVUohIWFYcGCBbJp06ZwOBzwVe+Qpwp9Xdfx2GOPya5duxrfj3x3z0kpER8fjzVr1shf//rXxkJMta24zWaDzWb72f+uzkvQNA0jRozA559/Lps0aWJMM7leY0dKiSeffFImJSXB6XSG9Hk8FosFb7/9NurUqcOziWrQcFb34sCBA+W2bdvkX/7yFzRs2BBOpxNSSthsNr/tGLRYLMZ3cDqdaNasGf7xj39gw4YN8o477pBOp9PjoyFCCOi6joYNG+Jvf/ubsUjc0/WOmnKVnZ3ts7LvtddekwkJCSFfBjGAENUyfATyCeeqcf7II4/Izp07B13jXK0vqFu3Lh555BHous7RCh//Hmqnq/nz58sePXqgvLzcaBBdr/Ghep2tViscDgfatGmD5cuXS7VW6Wr/fbXldkxMDO69915jl7ZQbTzruo709HTZo0cPY9cocr/c1zQNsbGxePvtt+Xq1atx2223VQgegdJ5I4QwzgnRNA3du3fHhg0bMHXqVKkCgqfqMxWAfve738n4+Hi3OhHMel8AGDx4MGJjY6Fpmld+L7Xuo1OnTnLo0KF87hhAiGoXPtLS0gL2nA/Xxvljjz3m0crGl40tABgwYICsV69eUCzwC+gC/aeFupMnT5YZGRlwOBwVDlmrDrvdDofDgfbt2+P555+X12rAqP+8U6dOskGDBiEdQBQVxLhItPrl/u233y43b94sH3zwQWNheSAFj6sFe1WHPfvss1i/fr1s3ry5RxrKqu4JDw/H2LFjvfo8qvdOSkrCgAEDpFmbAbjzvgAwbtw4AOBzxwBCVLvwEagjH66N86FDhxqN82BtlHXr1o2NLT8JvPHx8Xj66adNCbw2mw26ruP3v/89brjhBqjdsa5W+d9yyy01Oh082H4Du92OO+64wyeLjgO5ge50OvHAAw/IL774Am3atIHT6axwdk2wdNg4nU707t0bmzdvln379pVqZzEzOyKklOjVq5ds0aKFT+oeKaURfrxRL6gdxrp3716hTCIGECK3C+hAH/lwLYABYODAgUHbOFffqXnz5sYiZPJt42bw4MEyMTHRlEaHmiZSp04dZGVlXXfzhsjIyJC+B9R3T0xMRHJyMhtCbl4zFdymTZsm//WvfyE8PDxop3OqaVmapqFhw4ZYs2YN7r33XtNDCPDfdRje7hBQi8HT09ORnJx81Y4LM6+plBJRUVFo3LgxrldOEQMI0c8KLU3TjDUfDRo0COjFm7quQwiB1q1bB31PKBed+4+MjAxTA6+q3Pv16+eTxkwgioiI4DNRjfAhpcTMmTPlk08+aaz1CPYGpForZLVa8d5772Hy5MmmhBDXqb+/+MUvKnROePN3dTqdiIqKwrBhw7y262R4eDgiIiL4YDGAEFW/kRMbG4ulS5ci0HfRUd8nIiIC9erVC/rfj1OvfE9NQbjppptMHY1Sr5WSkmJMyWKvPpl1XwHAhx9+KCdMmACHwxHQaz2q3QD7qVGuaRpef/11TJkypdYhRG02MXDgQFm/fn2vLQKv6vcFvDsKw3qIAYSoRgWxlBI9e/aULVq0gCeGo31B7SjkWiATeSrwCiHgeuiZmQ2J6OhoqN2wiGp7T6kdAufMmSOzsrJCdvtu11PeX331VUyYMEHWpvNN13VIKZGdne3TBrnahev2229HmzZtpLd24SIGEKIaNXLi4+O5kxJRDalzBzzB6XR67LUptKgdoV599VU5bty4kD87yDWEvPPOO0hPT5c1WTehQl3Tpk3Rr18/n0/9VTt8jR492vh8RAwg5Jc4vYOoZsFDVe5nzpwx/jOzXhsALly4gJKSEmO0hagm1C6HDz30kJwyZQoPLnUJIcrHH3+Mmuxepf5tZmamrFOnDtSBhz5rYP70eUaOHGksvCdiACEiCqbC/KfKPicnx9QAoqZ07Ny50zhJnagm1C6HvXv3ln/72994WFyl50xtOfzWW28hLy+v2mFfNfDVugtfd+apEZnWrVuja9eukuUHVeiM4CUgIgp8qqGyaNEi/OEPfzBtuoNaLLxw4UJTg01Ng5A/UAt7ffF5fH0davrd1Tq/xMREvP/++0bj1NeN5MrfwxefR+326HQ68bvf/Q4zZsyo9odQ1/O2226TnTp18pvOAhWssrOzsWHDhoCd4eBP5xupaeqBviMhAwgRURBQc8ZzcnLE2rVrZUZGRq03c1ANo927d2Pt2rVCzVP3BX+aP64adr7Y8tPX10F997CwsGoHWU3T8M9//lM2btzYJ1usq0akasCp8yqu9m/U9fbkNVfP6NmzZ5GdnY3PPvtMqOlK1Ql5KoBkZWUZYcYfRpfUtRs6dCgef/xxFBYWBuQ0Tm+d6F4dsbGxAT1lnQGEN3KNC3LO5yTyz/Ll4Ycfxo4dOxAWFoaa7j7j2kB46KGHfLIttmooFhUVYeLEibhy5YpfNF5U7/Lhw4eNoOaNgGm1WvHqq69i3bp1PptTr777rl27hLvfXS06Hzt2rMzMzPRq41jVVSpIVL6HpZRwOBzG53TdubByUDA7jKjrsH37dmRlZYkjR44Ya2Rqcn/Y7Xbcc889fhXYVadFo0aN0L9/f7l06VKhAlKgdOxYrVbMnDkTCxcuhN1u95u2T3l5OQoLC39WXjOA0FUbB57cqYaIQpc62Gzfvn1iwoQJcu7cuRUaOtWpdFVjbcqUKdiwYYNQjUhfcDgcWLx4sSgtLfXbDhlvvcfWrVvx8ccfi0D57mrqVf369fHXv/4V3tqOVY1kWK1W494/ffo0tm/fjp07d2L//v344YcfcPnyZZSVlQkpJex2O2JiYmTDhg3RqlUrtG/fHl26dMEtt9xivIZ6NmrT86w+m81mw7x58/CrX/1KFBcX1zh8qGezR48eslWrVvC3LW/VwajZ2dlYsmRJQDWW1WfdtWsXVq9ezR1yGEACO3wkJiYiPT1d1qlTJ+C2nFUP48mTJ7Fu3TrBHXGI/IvqsZs3b57QdV3+61//QmxsbIWeYFXmuD6/qlGkgofD4cD//M//4K233vJp+FCfMz4+Hrm5uX41fcMX88KjoqKMRrUvO7LcXYuipl4999xzskGDBl4Z/VDPgNVqxaVLl7B48WIsWLAAW7ZsEfn5+df9yMCPO1EBP+7a1a5dOzl8+HBkZ2ejWbNmFd6jJtdNPWNTp07F888/L1RQq+3vOWbMmArv4S/U4YgDBgxAw4YNcfbs2YCbhhUZGekXz11V9zoDCF23EAaARo0a4auvvpItW7YM+O80ffp0+dhjj/m8cUJEVTfAFixYIL7++mu8/PLLMjMzs8qGn2sYUY2W9evX4+mnn8a2bdv85vnWNM2ni7/9ha7rxnXw93LXZRckOWnSJGNEwtOBUAWPN954AzNmzBCnTp36WWNY/fuq7iW18YKarZCTkyNycnIwbdo0jB8/Xj7xxBNo0qSJsYje3U5EFb6Ki4vxwAMPYO7cucJqtULX9RoHWXUfxMbGYsiQIcZ39Lf2j6ZpiImJwZAhQ+SMGTMCahpWoD13gYLb8HqxB0BKif79+8uWLVuirKzMONgr0P4cDgd0XceECRMQFRVlPJRE5H8h5ODBgxgxYoTo3Lkz/vSnP2HLli24cOGCUflrmobLly9j9+7d+Pvf/47evXsjPT1d+FP4oMCkGvHPP/887Ha7R0f8VRj4afQPHTt2FM8995w4deqUMRqiGo+qLtM0zWj8u/6pf6PqNovFApvNhvz8fLzxxhuiQ4cO4l//+pcxmuh0Oq8aitXIo9py+OjRo+jTpw/mzp1bo8XmVbUtfhpdkElJSX5fH48dO9b4vSi0cQTE2xfcZvvZvNRAoyoRteiNiPw3hKhRjR07dogdO3YAAOrWrYuEhASEh4dLh8MhLl++jNzc3AoNR/b0UW2onv22bdvK4cOHe3T0Q005KikpweTJk/Huu+8KVd+qxn9t6js1sqICTm5uLiZOnCi++OIL+frrryMhIcH4HK4Na/Xv1fdeuXIlJk6cKM6cOWPaVB7X9RVXG9Gp7XU1g1oL1LVrV7Rq1QqHDh0yRsgoNHEExAeNd3+am1kbXP9B5P9Uo0j14gohcOnSJRw+fBj79u0T3333nRE+bDabMVrLhgGZUd89/PDDRsebJ8PH+fPnkZ6ejnfffVfYbDZjTYWZdZSakqWCxQcffCA6duwo3n77bZw/f954xtSfmma0YcMGjB49GoMHDxZnzpyBWdOP1A5TycnJ6N+/v+k7bJrZVnHttBw1apQ0+/Up8HAEhIgohIKIagy4TtNQPafcnY/MbGwmJydj1KhRHjsUzzV89O/fH3v27BF2u93YVteTwUpNcTx27Bh++9vfimeeeQadOnWSbdq0Qb169VBaWoojR45g586dOHDggFDXBTBv4bAaQRg2bJiMiooybYG/muWwceNGdO7cudpnvlwv0IwePRr/93//xxFWBhAiIjKj0XW1ytzfmD1Vg8iV6uHPzs6W0dHRHtn5St2/JSUlGDJkiNfChyvXXeXy8vKwZs0asWbNmirLBk8c4qk6FLKzs69ZBtWkLHM4HJg8eTI++ugjpKSkmLJ+R03Datu2Lbp06SI3b97MdWYMIEREgdfgN7NXtTq9/66nKFc+OflqDTJ3/623rl11zjKo7UJZCi2qYT5u3Dij4Wk2taZk4sSJ2Lp1q9fDR+UQcLVnynVhu5lcdxi7/fbbTRtlUiM7u3fvxq5du8SXX34pW7ZsaSyiN+P1bTYbxowZg82bN3MDmxDGCXhEFJDUlCGz/twNPGqNhOtOOVJKhIWFIS4uDomJiUhMTER8fDzCw8ONStf137qux/Cmqj6/O38MH1Sde0xKifbt28vU1FSPrHtUjeQ5c+bg/fff91n4qFweVfVMeWrti+t0JrXY3qzvAQBLliyBEAKLFy+usEW3WZ972LBhiIyMNNbUUOjhCAgRBRQ1kpCcnIyMjAxZ220nhRAoKyvDkiVLRFlZWZX/fzV9QlXy8fHx6NChg+zSpQvS0tKQkpKC+vXrIzo62pgv7XA4UFRUhLy8PBw/fhzffPMNcnJykJOTI06fPm00TNRuQZ5s5Ffe1ap+/fq4+eabZePGjREREXHd/+6KFSvExYsXufEEuXWvAUBmZqaxRa2Z06/UblTnzp3Do48+Ksw4wC8QqRA2atSoCg372oYPdQjp4sWLhZQSn3/+uTh16pRs3LixKbtiqbK0adOm6Nu3r1y1alXAnQlCDCBEFIJUBda+fXs5a9Ys0yrzBg0aoKysrEIjW81PVtMGBg4cKLOystC3b180atTouq9bv359NGvWDB06dEBmZiYAID8/X27atAkfffQRli5dKi5evFjhvTxxvVTA6dOnj/zNb36DPn36oH79+m6/RqdOneTFixcFAwi58ywJITBw4MAKgcQsqpH8wgsvIC8vz+9OpvYGVVZ07dpVtm7d2rTtctW0tpycHBw8eBB2ux2FhYVq+2DT3ketQRs7dixWrlzJMoUBhIgocJSXlxtTHGpaKaqFlZcuXfpZJagqeZvNhvHjx8uHHnoIqampFSrryrtKVW5sqddUFa4QArGxsRg4cCAGDhyIF154Qb7zzjt44403RF5enrFI06wKWYWPuLg4vPbaa3L8+PEVPpu7Iy/snaTq3G8pKSnGs2Lm9CvVQD58+DDeffdd4YmF3YFAlTNjxowxrotZwQAAFi9eXOG3W7hwISZNmmTab6nWxN11111ITExEbm4uR1dDsbzgJSCiQK2EXffcr82f6+JN1+lK/fr1k5s3b5bvvPMOUlNTjcWkrus41H9fLUB1/bNYLLBYLMbBo67rLzRNQ+PGjfHcc89h165d8v7775cqEJhR0avGYMOGDfHZZ5/J8ePHV/j8ak2LO9eHc7TJ3XsOALp16ybtdrvpp3KrwP/mm2+irKzMCOyhVu45nU5ER0dj2LBhpoU81+lXy5YtE64dDxs3bhQnTpww7eBAVb7GxcXhF7/4hVShhBhAiIhCNtSoOeZ/+tOf5KeffopOnTpB0zSjl1H13tXmPVwXgzudTjRt2hSzZs3CvHnzZHx8fK1PjVYBqE6dOli+fLls3749HA6HKZ+f6Hq6d+9uNGrNIqWEzWZDfn4+PvjgAwEgJEc/1PObnp4uk5OTjR3HzAh3Qgjk5OTgu+++M6a62mw2lJSUYMWKFRVCoFnGjh3rkdclBhAiooBgs9kgpUTdunWxevVq+cQTTxjTrNQIhycCj3pfp9OJ0aNHY8OGDfLGG280FpnWqGD/qfEwdepU2blzZzgcDtjtdv7IQRKS1ciaN//cCa0qEHTq1Mm4D82iXnvNmjU4f/68EeBDjev6CTOna6rXWbRoUYXf7mr/ea0bnz+NXvXs2RMpKSmmTSMjBhAiosApCC0WFBcXIyEhAZ9++qnMyMgwRgy8USmqIOJwONC2bVv85z//ka1atapR76YKHykpKXjooYdM27/f19Sokbf+/HWUqLy8HLquG//TW3/Xa+iqOfwJCQlISUkx/jMznxHgv9vDhuIonpq6lJSUhAEDBph2FpIaXXKdfqVGJNT/3LRpkzh69Kjp07DCwsJwzz33SLMDqyfqCG+VPTabLSTCGBehE1HIKy8vR506dbBkyRLZoUMHn40Y2O12Y0rW6tWrZffu3cW5c+eqVemrfzt+/HgZHh4eFPvsSylx6dKlkD4xWf2GycnJaNGihalnP1zv2lssFuTm5iI/P/+qi4Vdgq+Mj4835eRs189gtVpRUlKCDRs2CLWBQqhR29UOGTJExsTE1GqU1JUa5d26dSu+//77CuWNCidlZWVYsWIFHnroIdNGK9T9kZWVhb/85S9+/XwXFxdX2IqdGECIiGrN6XTi/ffflz169IDT6fTpdCW1rWjLli0xb9482a9fP6Eqa3emW6gKcsCAAaY2An3JbrdjzJgx8sqVKx79Pup6SSmxbt06UVhY6De786iG5ssvv4w//vGP0lufS42gTZ48Gf/4xz+uemaD+l1atmxZoVFrBvVa3377LU6dOmWs1Qo16jurdRNm3vfAj6NLrp0Ylf//CxcuxEMPPWTqblhSSqSlpaFDhw4yJydHeGo78tqGpM6dO2PYsGHSZrN59N5T9/qhQ4ewd+/eoN76nAGEiEKWa69ycnIydF33i+lKajrEnXfeieeee04+++yzblXMqrKKi4tDy5YtTT3B2Je/T1RUFMw688VdrVu3lgcOHPC7BoCapuEtrlNP3NGiRYsKjVYzG8i7du0yeuRDbWtoFQpatWqFbt26mbZbnhpdKi8vx4oVKypMv6ocfLZu3Sq+//57eeONN5o2CqIC7pgxY5CTk+N3HSbqvr/vvvtw3333ee19//73v2Py5MkI5kMauQaEiAjwu0WQaorNU089hbS0NOnOdAtVecfFxSE6Ojqofh81/cGTf06nE5qmweFwQNd1vx06UouPvfGn1n+4GyiaN2/use+9Z8+ekC2fVNk0cuRIU7c4Vrtfbd++3dj9qnIAUaGvvLwcy5cvR1Uhpbbfa8SIEYiIiPDbKaNqC3NP/5WVlUHTNBQXFwf/Pc1mBxGR/y2AVJWwzWbDK6+8YjQE3P3vBtsiRm8vQvdnlc+b8cafO6EIAJKSkircv2Y+m99//321noNgC+BWqxWjR482tbxynV51rdd199/V5LfVdR3NmjVD7969pb+WXd5chO6pXRcZQIiIyO1Gt6ZpSE9PR9++faWZ8+qJzKQaqHXr1vVY58DZs2dDMoCotRKdO3eWt912m6nTr1wWmFc5/co1AP00UiIOHjxo2m5Y6j2llMjOzuZp6CGEAYSIqAYVt7crykcffTQkG18UWAEkJiYGAEzdAQsAysrKcOnSpZA8QVNdyzFjxhhhwKyGPwBs27YNhw8fvm6oUOsRli1bhmuFlZoELCEEBg0ahISEBNOmlxEDCBFRQFPrA1SF6zotRdd1Y+2AJ8KB6v3s378/WrVqxQO7yK8DSJ06dTzy+sXFxSgoKAi5EC6EgNPpRGRkJDIzM39suJk8/Wrx4sVuva7roYRq8bpZ31HTNCQkJODuu++WqtwjBhAiopANHqoydD0cqry8HGVlZUalbbPZjF48T2whqWka7HY7Ro4c6fcHdlHoUWHcarV6bAvr0tJS45kLqUbaT6fQ9+3bVzZt2tS0DgjXheXXm37lWg4JIbBjxw6xf/9+07dDllJi3LhxcOezUODjNrxERFVUhK49fBs3bsS6deuwbds2nDx5EgUFBQIAoqOjZZMmTdCxY0f0798fvXr1gtVqNXaWMWsagXqdwYMH4+WXX+ZhWOS3QcRT4did09iDuTxS6yPMCiBqPdmWLVvcmn6lqGlYS5YsQZs2bUz7PCpo3XnnnWjWrBmOHz9u6joT8sNwzUtARFSxslcV4ooVK9CtWzf06NFDTJ06VaxevVrs3btXHDt2DMeOHcM333wjPvnkE/HSSy+J3r17iy5dumDhwoVGZWpWg0lV8O3atcMNN9xg2iJUIrOfHU81GNUzFWqBTtM01K9fH3fddReEEKZNTarprlauhxaaPQ3L6XQiIiICI0aM4EgvAwgRUeiFD03T8Nvf/hZDhgwRmzdvFkIIY5qVxWKp8Oc6PSsnJ0eMHDlSTJgwwZguYkYIUQ2R8PBwdOnShZUz+SVd1+FwODzy2mFhYQgLCwup66mmdQ4ePFjGx8ebtjjbdfrVqlWr3Jp+pajPsHv3brF3715Tp2G5Lrb31HRWYgAhIvK78KGmeWRlZeHtt98Wak92KaWx0FzX9Qp/rgvU1XqQ2bNni2HDhhn/uRkhRL1G586d+WORXwZ3KSVKS0s98h5RUVHG4ZqhMhLiuj2t2a8LAJs3b8aRI0eqPdVJbQ++ZMkSVCe8uPO6Ukp06NABaWlpkiO9DCBERCFR2VutVjz99NNYtGiRCAsLM06nrc5rOJ1OhIWF4ZNPPhEPP/ywsSaktlSj69ZbbzW10icypTHxU0OxsLCwQigx676PiIhAfHy8DKXrqes6WrZsiV69epk67bK6u19dLcAsWbIEZp9NpGkaLBYLsrKyavTZiAGEiChgqFOGd+zYgT//+c/CZrPVaiqJw+GAzWbDm2++KTZs2GD0GJrREGvZsqXROOFe+eQv1L14+fJlj3QOAJ45Zd3fA90999wjVWeImdOvysrKsHLlympNv3L9PYQQ2LNnj/j6669NnYbl8r0RHh7OM0EYQIiIgt+LL75YYTpJbSp59d+fOnWqKY0m9d+vX7++cdgbkb8FkPPnz9f6+blaAElJSQmZAFJ5JMCs71zb6VeKmi5l9jQs9XlSUlLQs2dPTsNiACEiCk5qCsHRo0fxySefCLMWP6qeu88//1zs27fPtC0lo6OjERcXFzINMfp5uK28Dskbf+4GiuPHj3vsu6empobEb+yyFkK2a9fO1N2majv9qnKQWbx4sTGCbGaZ7Im1L8QAQkTkVwEEANauXYuysjKj8jerIaFpGlatWlXhvWojPDwc0dHRkr9caFJnbXjrLywszNhcwR1HjhwxPRyr10pLSzPCfbD/xgCQlZVl6m5QrtOv3D188FrlphAC+/btE7t27TL1c7rs/gUzd/8i/8KDCImI8ONhg2ZTQWbjxo14/PHHa1WJqnNFhBCoU6cOfzAPNvz8ccqH6mWeNm0aVq5cCbvd7pWGuJoC8/3334trNf7Vva4CiJnXUL1WamoqGjRogPPnz5t6zo6/3YMu52GYei3VaO/mzZtx7NixWo/KqkMJFy1ahE6dOpm68YA6/2TgwIFy/vz5Qr1XsFO/dSgELgYQIgppaurA/v37jUra7ABy6NAho/JXIaJWBfdPvdHBXkmpa1VQUIDBgwfj0qVLXmt4qqlE/rLbmPrOe/bswcaNG4WvP0dVjVsAOHz4sCgoKJAxMTGm3OuuDdKYmBh07dpVLl++PGgbpCoU9O7dWzZv3ty0k8Zdf7tFixZVeK/aBBoAWLp0KV588UVTp2Gpzzt27FjMmzfPZ8+hCv5//etfMWvWLI8HfzXd7vz589cM/AwgRERB0MAtKytDbm6u8MTrA8DFixdFUVGR5OLxmjcCduzYIdQWr6EsMjLSOPzSmw3w660DUc9Sbm4ujh49itTUVNMCiOuzNGzYMCxbtiwoRz9cv6ta/2BWAKl8+KB6zdpMOVUHtH733Xdi586dskuXLqatB7FYfjz5vm/fvmjSpAlOnjxp2jq6mtx3x48fxzfffCN8cS8EK64BIaKQV1paiuLiYo8V+MXFxcbrU80aOlFRUcbJ895Y++Cv1OGX3v5z57lQjdmdO3can9UsqlE7aNAgxMXFBeW6ADXSk5CQgEGDBlX43mbcNwCwfv16HD161DizqKrDVd39U4ewapqG2bNnm1p+qqlokZGRyMzMlCqU+Ep4eHiFNVGe/uMULCKqde9FMPdgeLIiNrsBcy2qIuV94L9UoydY5/4Hk40bN+L+++/3SOM8MTERI0aMkDNnzgy6aVhq04q7775bJiQkmL67FPDjVNOOHTtKs0bQ1KhEXl6e6YcSqnogOzsbb7zxhk+nQ1befY4YQIj8mmvD1szpCP4aGMxWXl7Om4gogEKiCiCaprm9c1Z1TZkyBXPmzAm6hqCa5jZ27FjTQ7YKBo888ggeeeQRjzXSzawL1Iha586dcdttt8m9e/cKX0zDIs/gFCwiDyovL0dJSYnHXt/XawpUReCpz+HJaVFEZH55IITAoUOHxIEDByqUEWY1SDVNQ2pqKkaOHCl1XfdYyPF6Y+ynhnWzZs3Qu3dvY7tlTwUFs/8Az3REqVGg0aNHG9eJGECI6BoFvBACuq7j8uXLHmtEt2jRwmcNdDUVxm63o1GjRqZWQKqSuXLlCm8mogCiQsKaNWtMDyCu5c4f//hHREZGBs3IsirzRowYISMiIuB0Oj32vYQQpv95+rqMHDnS2IGKZ4IwgBCRGwXnhQsXPPbaqampRtDxRQABgGbNmqFp06amBRDX8JaXl+ezgEVENXt+gR+3ZnUtq8ws+3RdR0pKCqZOnSo9OdXLm1TDesyYMaaVpcFSj+q6jlatWqF79+5SnUtDDCBEdJ0G+smTJ01vRFssFkgp0aZNG7Rq1cojFb07n0EIgTvvvFPa7XbTe+wuX76Mc+fOCQYQosChpmFt2bJFHDx40CNbp1osFmiahkcffRQZGRnS4XD4RQhxPaW+OiMDqjxPS0uTHTp0MM6CoP/eUwCMcEYMIETkhoMHD3rkdVXPX1ZWlk96hdSCyfvuu69C4KotFTZOnjzp1YPniMic59dqtcLhcGDu3LkVGpBmNvRVefP+++8jJSUFTqfTJyFECGFsDe26U5JaG2Gz2a5bNqv/f1ZWlhGu6L9UGBs6dChiYmI4DYsBhIjcaUh/8803FSoZ0x7enyq8SZMmITY21uh59FaFoOs6unfvLnv27Gnq9ouqsXLo0CGPXDci8nznBAC89957orS0tFaH3V2v/EtMTMSqVatk48aNvR5C1GdQZ2nExsYiJSUFrVq1QqNGjYyzLNRhglcrnzVNQ1hYGO655x6WeVcJeZqmISkpCQMGDJAq9BEDCBFdI4B8++23oqSkxKiszKz8dF1Ho0aN8P/+3//z2o4wrgsPp0+f7rERiu3btxvvR0SBFUCsViuOHj2K5cuXGw1ITwQATdNw880349NPP5U33nijEUI8WW6oE8B1XUd4eDjuv/9++fHHH8uDBw/K/fv3y3379slDhw7JPXv2yNdff1126tRJqlGRyuFChbOePXvKlJQU004+D8b6VJ0Qz3OVGECI6DqVsBACp06dwr59+yqEErMr4EceeQR9+/aVDocDdrvdo99LHWD17LPPyttvv930w7JU5bt582aPXDMi8p7p06fDk1NE1a5bt9xyCzZs2CAHDBggnU6nMf3J7CCiAoPT6USfPn3ktm3b5KxZs3DXXXehYcOGsNvtsFqtiI6ORtu2bTF58mRs27YNM2fOlPXq1cPVOoqys7ONeoOqvu5CCPTv3x+NGjWCpmkMagwgVN0Uz+8SWoUmAHz++eceqVxcFz3OmzcPrVu39lgIEULAbrfD4XAgOztbPv/886ZXAqr378yZM9i5c6dghUwUmFTHxLZt28Tq1as9urZBTQlt2LAhPvnkE/z5z3+WMTExcA0itSmn1IiHGskJCwvDs88+Kz/99FOkpqbC6XRC07SfnY2h67pxEO2ECROwceNGedttt0nXURpN0xAXF4fBgwdXqDPo57+B0+lEdHQ0hg0bJgFOVWMAoWpR+1ir4VjXxWqB8Of6ua81p5UqhrRVq1bBUwWmmgKVmJiItWvXon379tLhcBgLI80MUg6HA/fdd5987733PHIPqPvrs88+Q1FRkUfmjhORdz333HMe70hQU1yllHj88cexY8cO+ctf/lLWqVPHWIcB/DiCa7PZjPKxqjMtLBYLrFarEVzUiIeUEpmZmXLLli1y6tSpxnbh6vWqeh0VNJxOJ26++WZ88cUXUKM0YWFhEEJg4MCBMjExkYur3ajrAI4WMYBQjRqiP/zwA6xWq1HwXK0A9Nc/1dtusVhw8eJFFBUVscC8ToMaADZt2iSOHj3qkS0pVeWr6zqaNGmCzz//HOPGjZMq6FqtVqNyrG5hryppTdNgt9sxbdo0OWfOnGpvM1md9xRC4KOPPqpQ4RBR4FGjIDk5OeKDDz6A1Wo1RgQ81UBVowo33XQT3n33XezevVs+88wzsm3bthIAnE6nMWJxtQ5AXdehaZoRXJo0aYIHH3xQbtmyRS5evBjt27c3woK7nTw2mw2apqFu3bpYtWoVfv3rX8uysjJIKTFu3Diua3CzI0xKiTvuuAOtW7eWXC8T2Gy8BN4riC0WC9auXSv+8pe/SLXdXqA2sC5cuICHH34YDofDY43qYAmeNpsNZWVlWLBgAZ588kmPLTJUv0NsbCz+/e9/Y/DgwfKFF17At99+K1wrQfW5Kld4rkFT7eyipkwMGDBAvvTSS+jYsaOxtsXse1eFpVOnTmHdunVCPTdEFNhloBACTz31lBg8eLCMjY31+OnlakqWlBKtWrXCCy+8gOeeew67d++WGzduxI4dO3Dw4EGcOXNGFBQUoLy83Ciro6KiUL9+fXnTTTchLS0NPXr0QOfOnRETE1OhU6kmU6XU57JYLJgxYwYaNWokZ8yYIdLT08GdndxvS9lsNowaNQpTp07ltsUMIORuAwsAnnjiCfHss8/CZrMFZI+HEAJFRUXGZ2f4cO93nzVrlnj44Yel3W73WAXsOg1h1KhRGDJkCObPny9nzpyJTZs2iWv1Pla+F+Pi4pCRkSF//etfo3///kbh76lKUlXM7733HoqKiozF7kRUsRGrphH5uiHoTv3l2rHw9NNP46233vLKdrmqk0edy2Gz2dCxY0d07NjR+DelpaWyqKioQgCJjIxEdHR0ld+3OiMe7pTRU6dOxX333ScjIiKMupXc+11HjRqFl156yfhdOHrEAEJuViClpaVBURAwfLjXsLZarTh48CBWrFiBESNGeLQCdp2GEBERgfHjx2P8+PHYv3+//PLLL7F582YcPHgQ586dEwUFBcb0qri4ODRp0kS2bdsWPXr0QI8ePZCcnGyEE0+ezqteu6ioCP/4xz+4+JzoKvLz841pRIFCdVy8/fbbYvjw4TI9Pd2jnRmV6ynXRr8awbVYLIiIiIBq/F8tYLmuCTGzjFZlXEpKCm/qGrQ72rRpg9tvv11u3LhRqJElYgAhNwrjYOjp4ANffS+//DIyMzONCtHT0xBcNwxo3bo1WrdujUmTJgEAysvLZXFxsRFAoqKiflbJqqHtmqwhqe4zYbPZMGvWLJw4ccLYWpOI/tvwAoBf/epX6Nq1qzT7XKHqhon3338fOTk5wt2OKFXe/fKXvxS7d++WdevW9eqZF67rGF0/U+XPp/6tt8KRp66Bp+sXX34Odc2ys7OxceNGjhwxgFB1H0oKrdBptVqxc+dOMXfuXDl27FivTENwrUjVVARVCYeFhSEsLOxnBbvrv/FGJazOCLhy5QqmTZsmOJxOdPUAkpGRgYyMDJ9/nr179yInJ8ftkXA1EvzDDz9gwoQJWLZsmdEZ56sGpOv7+uozBHP48NR1Vdds2LBheOKJJ1BcXMwCggGEiK5XKajFmNHR0V6tKNRUhGuF4Mr/xlvhzGaz4cUXX8SpU6c4+kF0nefFlwFddZzUZBqxetaXL18unnnmGfniiy/CG4enhmI9M3HiRGzZssXYfcsXwUPXdTRu3BjLli1DWFiYafWdWnienJyM9PR0uWzZMg6BMIAQ0dW49gD+4Q9/8NpizGtVEP7QmLLZbNi+fTtee+01zuUlug5/2CmpNieMqzLvj3/8o2jZsqWcMGECQ4iJdYzFYsGpU6cwa9Ys4Q/rhPbu3YutW7fKnj17GnWgWUFLSomxY8di2bJl/PEDEDdQJvJyg1stxvz4449Deqcn1YtbUlKCCRMmGAd9cfoVUWiUgw888IBYunQp7HY7HA4HL4wJAQQAPv74Y6iDDl3P7vL2n3r/hQsXVijzzQriPx3iiIYNG/7YoOWZIAwgQXWBeEOTBxreQghMmDBBnDhxAjabLSR7/Z1OJ6xWK37729/i22+/5egHUQiVgeqcjtGjR4tVq1YxhJjYXlEHuarDFn31pw5yXLFihSgrKzP16AG102NMTAyGDBkizdgimRhA/KYnoby8HPn5+aYnd+K9ZbFYcP78eYwYMQLFxcXGfNlQoaZcvPLKK5g9e7bw1TxlIvJdCBFCwOFwIDMzU3z00Uew2+3GSCjVrF754YcfsGHDBr/Yylx9pqNHj2LTpk3w1GfKzs42Qi0xgAQ0p9MJi8WC2bNn4+LFi8Z2pkRmUWsfcnJyRFZWllEZh0IBqsLHv//9bzz++OMMH0Qh3GgWQsDpdGLUqFHizTffNNbEsTFZ/WsJACtWrEBpaanfHHSsRiU8NQ1LSolu3bqhRYsWRmceMYAEdOPoo48+wqOPPip42B55MujabDasWLFCjBkzxugtCtbGuJQSTqcTdrsdc+fOxfjx44X6vv5QUQZSxeXtz8pKnTx1T6j61WKx4Pe//734n//5H2Nr7lBdH+dvDX0zft+VK1eKkpIS04OROsdq5MiRsqSkxC82aSAGkFqFj6ysLMFFseStELJgwQKRmZmJoqIiWK3WoKt41Xxvm82Gf/7zn8jOzjbO+/CH5yvQTpYuKyvzaiPDH64NQ5B/BQ91D5rVOSGlhNVqxWuvvSbS09Nx5MgRYwvZYOkE9NTzqjqvjh07hk2bNvnF9KvKn+3EiRP46quvYPZnU8Fr9OjRiIuL81hZVVJSwoefAcQ74UNNiWH4IG+FkBUrVog+ffoYFW+wzIVWUxotFgueeuopPPjgg0Kd4uzr76fe/+zZsygoKPDrZ16VSUVFRThz5ozwdABRr52fn4+zZ896/P2udw+Vl5ezsPCHRsNPDb6TJ0+a2qiWUhpTUz/77DNx++23izlz5sBqtRqjIYFaHqrv5qkQrRr0y5cvh9mLvc28ZxYtWmR6EFN1Sbt27dCtWzdZWFjokcB94sQJj4ZIBpAQbgBWFT449Yq8HUK2b98uunXrJpYvX27stR+oU7J0XTcaFKdOncIvfvELTJs2Tah5u/5QkKuRmW3bthk9sP58PaWU2LdvH86dO+fxsKTeb+/evcjNzTUqel8ExNOnTyM/P5+dQn5wDwJAbm4uvvnmG4/0tKvd8S5cuID7779fZGZm4sCBA0Z5GEhBRE07FULAarXizJkzHmlX+Ov0q8r3zcqVK0VRUZHpAUmNsmRlZZnaUaHqhOLiYuzYsUP447VlAAlgDodDTYFh+CCfhxCr1Ypz585h6NChYsqUKbhy5QrU9rSBEkRUpWuxWGC1WjFv3jx07txZrFq1ylhw7i+FuBACQgh88MEHfllxV76uQgjMnTvXK2HJ9f1cGzm+aLhs3LjR1EPMqOa/hxACK1asQH5+vsc2aFGjBVarFUuXLhWdO3cWzzzzDPLy8ioEEX+tp9UWtEII2Gw2nD9/HpMmTcKMGTNM71RSje/vv/8eW7duFf7YaeV6QOKGDRtgdnBVZdPQoUONM0HMGG1S13H9+vU4ffo0uFV8iFM3Vf369XHp0iUppZS6rsuaKC8vl1JKOX/+fOl6eA55n9r5ZMyYMVJKKZ1OpzSbes21a9dKXzWo3L3H1We78cYbMW/ePOM7aJomnU5nje95T1KfTfn222/l8OHDjdaJWY1H9ToZGRnG+9aEw+GQUkr5n//8x2P3gyqvoqOjcebMmRqXV5qmSV3X5enTp2V8fLwRnK5WETdr1gxlZWW1fr8TJ07ImJiYq75f5ef30UcfrXBtzXpmO3XqJM28hzzWo/fT9W/ZsiVU/eKPz2pN6LounU6nLC8vl7fccovXzl1w/c0bN26MP/3pTzI3N9fvykR1fVzLo7Nnz8oXX3xRJiUlAQD27t1bqzLrWuXY9OnTpeuz6I91vBACv/zlLz1Wx5v9e6pre8cddwRE+UMBEkDUjbVgwQJpsViuW8GSdwJIdnZ2yAeQqirefv36yXXr1v3sHjazIqtNIe36OY4cOSKnTJki69SpYzTKzHy2zAgg6l4oKCjwaGPKjACiaZpRXg0bNuyaFaEZAcQ1SN59991uVbyeCCDq88+cOTMgntdgDiC6rhsddk8++aTXG2NqNERp1KgRnnzySfntt99W+ayoAO3pa+L6fq727t0rH330UdmgQQPjM/fq1cv08OH6et26dfPrRrJ6Nho2bIiCggKPPBtmvZ6u60b588orrzB8kHkBhOHDf3tHsrKyGEAqFdqun7Nfv35y0aJFsqSk5Gf3tDd6Aa9V6e7YsUP+5je/kbGxsTB71MOsAOLamC8tLXW7ge2LAOLaAyellI899th1P2ttAkjl95syZYrb18bMAKJpmtHY3bZtm4yOjjY9xDKAVK+DQX2Ht99+26eNscpBJCwsDHfddZecM2eOPH36dJVlviobVSip7u+h/jsqmKvXq+zUqVNy1qxZcsCAAdJ1FCI8PBwA8Pe//93U0UHXsu/AgQNS1aGB8HysWLHCGDHyx1E+dV3V7Bir1co2oifafaH2hdVuVwsWLMCYMWOMO8qMeazeGpIO1gDidDqRnJxs2u8RDNR8UzX3dP369WL9+vW4+eabMWrUKDl8+HC0a9euwrC72nFF3ZOuAdvdQlQtEnddLK4qf9f7/NSpU/jkk08wd+5c/Oc//xHq33pj3Ypaa6LmF7vTcFGB7tChQ3jggQewYcMGYbVavTJnWm31q9ZWXK8cUfPHL168iIcffhjvvfee25/VdR1Odd/vwoULmDJlCj788MNqXxs1970mW2FW/o1Wr16Ne++9VxQWFgbc4nPXxcfXu/7+3vlhs9lQXl6OF154AS+99JJPz8Zy3U3KarWivLwcq1evFqtXr0Z8fDx69OghBwwYgJ49e+KWW24xGv9VvY76DlXdV+r3cg2+lX/D0tJS7N+/H1999RXWrFmDr776Sly5cqVCnabrOsrKyhAREYHBgwcbz79ZW8WqDXSWLVtmbGTiz9uJq/JowYIFGDRokF9tKKDud7Wu6c9//jP+8Ic/CNf6kEJcbUZAVM+DSrVmjnwweNReYmIivvvuO6O3iSMgP6caaK7PQ4cOHeRTTz0l161bV2Fu9LVGMJxOZ5V/17vuxcXFcufOnfLVV1+Vd999t4yLi/vZ5/N0Y0v1gA4aNKja98D+/fvlU089ZYzSeLonV12LmJgYVB61up4TJ07IV199VTZr1sztz6rujRYtWqC61+b48eNy+vTpsmnTptW+NioA/+///m+tn9OdO3fKX/3qVzIQy1bXtVvBsO4jNzdXzpkzR7Zr184vy0wVRKq6V1u2bInMzEw5depUuWjRIvn111/L8+fPG6Nr1Vkreu7cObl792750Ucfyeeff14OHTpUtmjRosqyybUMVM/FuHHjPPo7denSJSCmCanr0qBBA5g5EmSWixcvygULFsiuXbtK1w488tD9EIgBREqJ+vXr47vvvpPx8fFu9TC5HPhmjHyYlWpVL2FMTAw6deokIyIimJarWSC1aNECU6ZMQatWrTzWY6hpGqxWK9atW4eMjIyAPuVe9dZU7u1KSEjArbfeKtu1a4fU1FS0atUKjRs3RmJiItRiYneUlpYiLy8Pp0+fxtGjR7Fnzx71J44fP15lIFDbtnqrDLjhhhswePBg6c7++pcuXcLBgwfxzTffCIfDYVxDb/3+drsdY8eOlZGRkde9RkVFRTh8+DC+/vprofa0d3ckQl2bmJgYZGdnS3d2KSosLDTer6ioqFrv53o/6rqOdu3aye7du9fozINLly5h//79+Prrr4Vr2RBIZam6/rGxsRgzZoz01C5Rnv4OJSUlOH78OL7++muRl5dXo3vCF59bdSxebRQgLi4O9erVQ2JioqxXrx5iY2MRGRmJsLAwWCwWaJqG8vJyFBcX48qVK7h48SJyc3NFXl4e8vPzrxq+1YhK5d9aPRc9e/aUt912GzRNMzXECSFQXFyMf//73yLQtmvPzMyUycnJpp6PokZxVZvPnWdPCIGysjKcOHECe/bsEefOnQuI+50BJEACSFXhQzWYaksNed55551y9uzZaN68Oe+qWvDkdIVgCiCuz4OqeHVdr/L72O12JCQkICEhQdatWxcxMTGIjIxEeHi48Tw5nU4UFxejsLBQVbwiLy8PxcXF1a50/Z2/bQV8vc4N1+kiwfZ+1+vUodC7B83spFHlo+u01NpeC/V6gXhN/K0d56/3jVntQ7pOXRzsX7Dymg9105tx86vw0bt3b7ly5UpERUV59LTTYKbm8XMqW/UDm2tF6NoLqK6rw+HAuXPncO7cuWrfmK6v5/pe/jDPuPKCVHfuMTPnX9ekvKjO71rbNTTefj9VedfmGVa/UaCHj+rem/5atgTS+UNV3UtX67BxZ02ca1tB/dX0Wni6bvPndR9Xu7b+trBb3e8MHgwgpj2Ung4fd955Z4Xwwa3aatfrQLUvRCtXkq6VrWuBX7nwr/x81LbS9cZ3DaSK19uf1RfXhhV4YN6bofS7+KLnnc/Fz3GEk4I2gKhpV/Pnz0d2drYxp9jsaVcqfPCUXvLnStes4E1ERERUW0HZ7exwOIw1Hyp8mDVfs/K0q+joaLe2ASUiIiIiogAeAbna3EFvr/lg+CAiIiIiCoEAUlpaWmGBnBACmqZ57JBB1/CxYsUKhg8iIiIiohoIuNaz2j2hoKAACxYsMA7+sVgssNvtmD9/vsfDB6ddBS4uBCQiIiLyrYAcAdF1HUIIPPLII6K8vFwOHz4cUkrMnz8fTz75pMemXTF8BDZN0xAWFoYNGzb8mL6D4BwQIiIiIvKByMhI1KlTx/i/zdpbWu2j37t3b1lYWCillFLTNEmBx+FwSCml/Oyzz2RUVFSFszKIiIiIiNxS+bAnMw+2YfgIvvDxxRdfyJiYGFNDKhERERGFaBAxs0HJ8BF84eOrr76SsbGxAHjoIRERERH5EYaP4AsfmzZtYvggIiIiIoYP8nz42Lx5s4yPj2f4ICIiIiKGD/Js+Ni+fbusW7cuAFRYK0RERERE5Bfho0+fPgwfQRI+cnJyZL169Rg+iIiIiIjhgzwbPnbu3CkTExMZPoiIiIiI4YM8Gz52797N8EFERERE/kctSGb4CJ7wsWfPHpmUlMTwQUREROTHQvI0NovFAikl2rdvL7/88ktERUVB13XukhSANE2D1WrFvn37kJ6eLs6cOQOr1QpN03hxiIiIiPyxLR6SqUsISCnx7LPPIioqCg6Hg+EjADmdTiN89O/fn+GDiIiIiAHEP+m6DgBo3ry50YNOgRc+bDYbDhw4gAEDBojTp08zfBAREREFAFsofmmr1Qqn04mvvvoKaWlpKC8v5whIoN24Nhu+++47ZGRkiJMnTzJ8EBEREZH/EkJACIGkpCRs3bqVq7gD0M6dO2WzZs2MQElEREREAdIWD+UQIqWE3W5H//79ZVJSEqSUEELwrvBT6vfJzc3FunXrRFlZGSwWizGljoiIiIjI70MIBS5OmyMiIiIKwDY4Q4iAxWJhGAkgUkroug4pJS8GERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERedb/BxnObz8rFKbIAAAAAElFTkSuQmCC" alt="UniFECAF"/>
+    <span>Financeiro — Cobrança &nbsp;|&nbsp; Documento de Uso Interno</span>
+    <span>Versão 1.0 &nbsp;|&nbsp; Maio / 2026</span>
+  </div>
+
+</div><!-- /page -->
+
+<script>
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const t = document.querySelector(a.getAttribute('href'));
+      if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+</script>
+</body>
+</html>
