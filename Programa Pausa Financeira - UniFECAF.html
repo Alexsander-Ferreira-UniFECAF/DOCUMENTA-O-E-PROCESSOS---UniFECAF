@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Programa Pausa Financeira — UniFECAF</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --blue:    #1A3A5C;
+    --blue-m:  #1F6FBF;
+    --blue-l:  #D6E8FA;
+    --blue-ll: #EDF5FF;
+    --orange:  #E87722;
+    --orange-l:#FFF0E0;
+    --green:   #0F6E56;
+    --green-l: #E2F5EF;
+    --purple:  #4B3D9E;
+    --purple-l:#EEEDFE;
+    --red:     #C62828;
+    --red-l:   #FFEBEE;
+    --gray:    #F5F7FA;
+    --gray-m:  #9E9E9E;
+    --text:    #1A1A2E;
+    --text-s:  #555566;
+    --white:   #ffffff;
+    --radius:  14px;
+    --shadow:  0 2px 12px rgba(26,58,92,.08);
+    --nav-w:   240px;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #F0F4FA;
+    color: var(--text);
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ── NAV LATERAL ── */
+  .sidebar {
+    width: var(--nav-w);
+    background: var(--blue);
+    position: fixed;
+    top: 0; left: 0;
+    height: 100vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    transition: transform .3s;
+  }
+  .sidebar-logo {
+    padding: 28px 24px 20px;
+    border-bottom: 1px solid rgba(255,255,255,.1);
+  }
+  .sidebar-logo .tag {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--orange);
+    display: block;
+    margin-bottom: 4px;
+  }
+  .sidebar-logo h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 17px;
+    color: #fff;
+    line-height: 1.3;
+  }
+  .sidebar-logo .badge {
+    display: inline-block;
+    margin-top: 10px;
+    background: rgba(255,255,255,.1);
+    color: rgba(255,255,255,.6);
+    font-size: 10px;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+
+  .nav-section {
+    padding: 20px 16px 8px;
+  }
+  .nav-section-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.35);
+    padding: 0 8px;
+    margin-bottom: 6px;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: rgba(255,255,255,.65);
+    font-size: 13px;
+    font-weight: 500;
+    transition: all .2s;
+    text-decoration: none;
+    margin-bottom: 2px;
+  }
+  .nav-item:hover { background: rgba(255,255,255,.08); color: #fff; }
+  .nav-item.active { background: var(--orange); color: #fff; }
+  .nav-item .icon { font-size: 15px; width: 20px; text-align: center; flex-shrink: 0; }
+
+  /* ── MAIN ── */
+  .main {
+    margin-left: var(--nav-w);
+    flex: 1;
+    min-height: 100vh;
+  }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    background: var(--white);
+    border-bottom: 1px solid #E8EDF4;
+    padding: 16px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .topbar h2 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .topbar .meta {
+    font-size: 12px;
+    color: var(--gray-m);
+  }
+  .topbar .interno-badge {
+    background: var(--red-l);
+    color: var(--red);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 20px;
+    letter-spacing: .04em;
+  }
+
+  /* ── PAGES ── */
+  .page { display: none; padding: 40px 40px 80px; }
+  .page.active { display: block; }
+
+  /* ── HERO (home) ── */
+  .home-hero {
+    background: var(--blue);
+    border-radius: var(--radius);
+    padding: 48px 40px;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 28px;
+  }
+  .home-hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 280px; height: 280px;
+    background: var(--blue-m);
+    border-radius: 50%;
+    opacity: .18;
+  }
+  .home-hero::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: -40px;
+    width: 200px; height: 200px;
+    background: var(--orange);
+    border-radius: 50%;
+    opacity: .12;
+  }
+  .home-hero .label {
+    display: inline-block;
+    background: var(--orange);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+    position: relative; z-index: 1;
+  }
+  .home-hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(24px, 3vw, 36px);
+    color: #fff;
+    line-height: 1.2;
+    margin-bottom: 14px;
+    position: relative; z-index: 1;
+  }
+  .home-hero p {
+    color: rgba(255,255,255,.72);
+    font-size: 15px;
+    max-width: 580px;
+    line-height: 1.7;
+    position: relative; z-index: 1;
+  }
+
+  /* quick stats */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .stat-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 24px 22px;
+    border-top: 3px solid;
+  }
+  .stat-card.s1 { border-color: var(--blue-m); }
+  .stat-card.s2 { border-color: var(--orange); }
+  .stat-card.s3 { border-color: var(--green); }
+  .stat-card .num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 30px;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .stat-card.s1 .num { color: var(--blue-m); }
+  .stat-card.s2 .num { color: var(--orange); }
+  .stat-card.s3 .num { color: var(--green); }
+  .stat-card p { font-size: 13px; color: var(--text-s); line-height: 1.5; }
+
+  /* quick nav cards */
+  .quick-nav {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+  .qcard {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 22px 24px;
+    cursor: pointer;
+    transition: all .2s;
+    border: 1.5px solid transparent;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .qcard:hover { border-color: var(--blue-m); transform: translateY(-2px); }
+  .qcard .qicon {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .qcard h3 { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .qcard p  { font-size: 12.5px; color: var(--text-s); line-height: 1.5; }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 20px;
+  }
+  .section-label .num {
+    width: 30px; height: 30px;
+    background: var(--blue);
+    color: #fff;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 600;
+    flex-shrink: 0;
+  }
+  .section-label h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    color: var(--blue);
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 28px;
+    margin-bottom: 20px;
+  }
+
+  /* ── PLANOS ── */
+  .planos-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .plano-card {
+    border-radius: var(--radius);
+    padding: 26px 22px 22px;
+    position: relative; overflow: hidden;
+  }
+  .plano-a { background: var(--blue-ll); border: 1.5px solid var(--blue-m); }
+  .plano-b { background: #FFF8F0;        border: 1.5px solid var(--orange); }
+  .plano-c { background: var(--green-l); border: 1.5px solid var(--green); }
+  .plano-badge {
+    display: inline-block;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: .08em; text-transform: uppercase;
+    padding: 3px 10px; border-radius: 20px;
+    margin-bottom: 14px;
+  }
+  .plano-a .plano-badge { background: var(--blue-m); color: #fff; }
+  .plano-b .plano-badge { background: var(--orange);  color: #fff; }
+  .plano-c .plano-badge { background: var(--green);   color: #fff; }
+  .plano-emoji { font-size: 28px; display: block; margin-bottom: 10px; }
+  .plano-card h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 17px; margin-bottom: 8px; line-height: 1.25;
+  }
+  .plano-a h3 { color: var(--blue); }
+  .plano-b h3 { color: #8B4500; }
+  .plano-c h3 { color: var(--green); }
+  .plano-card .desc { font-size: 13.5px; color: var(--text-s); line-height: 1.55; margin-bottom: 14px; }
+  .plano-detalhe {
+    display: flex; flex-direction: column; gap: 6px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(0,0,0,.08);
+  }
+  .plano-detalhe span {
+    font-size: 12px; color: var(--text-s);
+    display: flex; gap: 6px; align-items: flex-start;
+  }
+  .plano-detalhe span::before { content: '•'; flex-shrink: 0; font-weight: 700; line-height: 1.4; }
+  .plano-a .plano-detalhe span::before { color: var(--blue-m); }
+  .plano-b .plano-detalhe span::before { color: var(--orange); }
+  .plano-c .plano-detalhe span::before { color: var(--green); }
+
+  /* combo pills */
+  .combo-box {
+    background: var(--purple-l);
+    border: 1.5px solid var(--purple);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    display: flex; align-items: flex-start; gap: 16px;
+  }
+  .combo-icon {
+    width: 40px; height: 40px;
+    background: var(--purple);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+  .combo-box h3 { font-size: 14px; font-weight: 600; color: var(--purple); margin-bottom: 6px; }
+  .combo-box p  { font-size: 13px; color: var(--text-s); line-height: 1.55; }
+  .pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .pill {
+    font-size: 12px; font-weight: 600;
+    padding: 4px 12px; border-radius: 20px;
+    background: var(--purple); color: #fff; opacity: .85;
+  }
+  .pill.light { background: #fff; color: var(--purple); border: 1px solid var(--purple); opacity: 1; }
+
+  /* ── TRAVA ── */
+  .trava-box {
+    background: var(--orange-l);
+    border: 1.5px solid var(--orange);
+    border-radius: var(--radius);
+    padding: 28px;
+    display: flex; gap: 24px; align-items: flex-start;
+    margin-bottom: 16px;
+  }
+  .trava-icon {
+    width: 56px; height: 56px;
+    background: var(--orange);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .trava-icon svg { width: 28px; height: 28px; }
+  .trava-box h3 { font-family: 'DM Serif Display', serif; font-size: 18px; color: var(--orange); margin-bottom: 8px; }
+  .trava-box p  { font-size: 14px; color: var(--text-s); line-height: 1.65; margin-bottom: 10px; }
+  .trava-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--orange); color: #fff;
+    font-size: 12px; font-weight: 600;
+    padding: 4px 14px; border-radius: 20px;
+  }
+  .info-box {
+    background: #FFF8F0;
+    border: 1.5px solid var(--orange);
+    border-radius: 10px;
+    padding: 14px 16px;
+    display: flex; gap: 12px; align-items: flex-start;
+    margin-bottom: 14px;
+  }
+  .info-box p { font-size: 13px; color: #8B4500; line-height: 1.6; }
+
+  /* ── FLUXO ── */
+  .fluxo-steps { display: flex; flex-direction: column; }
+  .fluxo-step {
+    display: flex; gap: 18px; align-items: flex-start;
+    padding: 16px 0;
+    position: relative;
+  }
+  .fluxo-step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 19px; top: 52px;
+    width: 2px; bottom: 0;
+    background: #E0E6F0;
+  }
+  .step-dot {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+    position: relative; z-index: 1;
+  }
+  .step-content h4 { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .step-content p  { font-size: 13px; color: var(--text-s); line-height: 1.55; }
+  .step-tag {
+    display: inline-block;
+    font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .06em;
+    padding: 2px 8px; border-radius: 10px;
+    margin-bottom: 5px;
+  }
+  .polo-alert {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--red-l);
+    border: 1.5px solid var(--red);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-top: 16px;
+  }
+  .polo-alert svg { width: 22px; height: 22px; flex-shrink: 0; }
+  .polo-alert p { font-size: 13px; color: var(--red); font-weight: 500; line-height: 1.5; }
+
+  /* ── COMUNICADO PAGE ── */
+  .comunicado-body {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 48px 52px;
+    max-width: 760px;
+    line-height: 1.8;
+    font-size: 14.5px;
+    color: var(--text-s);
+  }
+  .comunicado-body h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px; color: var(--blue);
+    margin-bottom: 6px;
+  }
+  .comunicado-body .sub {
+    font-size: 12px; color: var(--gray-m);
+    margin-bottom: 32px;
+  }
+  .comunicado-body h2 {
+    font-size: 15px; font-weight: 700;
+    color: var(--blue); margin: 28px 0 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .comunicado-body p { margin-bottom: 14px; }
+  .comunicado-body strong { color: var(--text); }
+  .comunicado-body .destaque {
+    background: var(--red-l);
+    border-left: 4px solid var(--red);
+    padding: 14px 18px;
+    border-radius: 0 8px 8px 0;
+    margin: 20px 0;
+    font-size: 13.5px;
+    color: #8B0000;
+  }
+  .comunicado-body .nota {
+    background: var(--orange-l);
+    border-left: 4px solid var(--orange);
+    padding: 14px 18px;
+    border-radius: 0 8px 8px 0;
+    margin: 16px 0;
+    font-size: 13px;
+    color: #8B4500;
+  }
+  .comunicado-body .assinatura {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid #E8EDF4;
+    font-size: 12px;
+    color: var(--gray-m);
+  }
+  .copy-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--blue); color: #fff;
+    border: none; border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 13px; font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 28px;
+    font-family: inherit;
+    transition: background .2s;
+  }
+  .copy-btn:hover { background: var(--blue-m); }
+
+  /* ── ROTEIRO PAGE ── */
+  .roteiro-bloco {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 26px 28px;
+    margin-bottom: 16px;
+    border-left: 4px solid;
+  }
+  .roteiro-bloco.r1 { border-color: var(--blue-m); }
+  .roteiro-bloco.r2 { border-color: var(--purple); }
+  .roteiro-bloco.r3 { border-color: var(--orange); }
+  .roteiro-bloco.r4 { border-color: var(--red); }
+  .roteiro-bloco.r5 { border-color: var(--green); }
+  .roteiro-bloco .rtag {
+    font-size: 10px; font-weight: 700;
+    letter-spacing: .1em; text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .r1 .rtag { color: var(--blue-m); }
+  .r2 .rtag { color: var(--purple); }
+  .r3 .rtag { color: var(--orange); }
+  .r4 .rtag { color: var(--red); }
+  .r5 .rtag { color: var(--green); }
+  .roteiro-bloco h3 { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 10px; }
+  .roteiro-bloco .tempo {
+    display: inline-block;
+    background: var(--gray);
+    color: var(--gray-m);
+    font-size: 11px; font-weight: 600;
+    padding: 2px 10px; border-radius: 20px;
+    margin-bottom: 12px;
+  }
+  .roteiro-bloco p { font-size: 13.5px; color: var(--text-s); line-height: 1.7; margin-bottom: 10px; }
+  .roteiro-bloco .fala {
+    background: var(--gray);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 13.5px;
+    color: var(--text);
+    line-height: 1.7;
+    font-style: italic;
+    border-left: 3px solid #CDD5E0;
+  }
+  .dicas-box {
+    background: var(--blue-ll);
+    border: 1.5px solid var(--blue-m);
+    border-radius: var(--radius);
+    padding: 22px 26px;
+  }
+  .dicas-box h3 { font-size: 14px; font-weight: 600; color: var(--blue); margin-bottom: 14px; }
+  .dicas-box ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .dicas-box li {
+    font-size: 13px; color: var(--text-s); line-height: 1.55;
+    display: flex; gap: 8px;
+  }
+  .dicas-box li::before { content: '💡'; flex-shrink: 0; }
+
+  /* ── RESPONSIVE ── */
+  @media(max-width:860px){
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.open { transform: translateX(0); }
+    .main { margin-left: 0; }
+    .planos-grid { grid-template-columns: 1fr; }
+    .stats-row   { grid-template-columns: 1fr; }
+    .quick-nav   { grid-template-columns: 1fr; }
+    .page { padding: 24px 20px 60px; }
+    .comunicado-body { padding: 28px 24px; }
+    .topbar { padding: 14px 20px; }
+    .hamburger { display: flex !important; }
+  }
+
+  .hamburger {
+    display: none;
+    flex-direction: column; gap: 5px;
+    cursor: pointer; padding: 4px;
+  }
+  .hamburger span {
+    width: 22px; height: 2px;
+    background: var(--text); border-radius: 2px;
+  }
+  .overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.4);
+    z-index: 90;
+  }
+  .overlay.show { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .page.active > * { animation: fadeUp .4s ease both; }
+</style>
+</head>
+<body>
+
+<!-- OVERLAY mobile -->
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<!-- ── SIDEBAR ── -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <span class="tag">Uso interno</span>
+    <h1>Programa Pausa Financeira</h1>
+    <span class="badge">UniFECAF · 2026</span>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-label">Visão Geral</div>
+    <a class="nav-item active" onclick="go('home')">
+      <span class="icon">🏠</span> Início
+    </a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-label">O Programa</div>
+    <a class="nav-item" onclick="go('campanha')">
+      <span class="icon">🎯</span> Por que fazemos isso
+    </a>
+    <a class="nav-item" onclick="go('trava')">
+      <span class="icon">🔒</span> Trava de Boa-Fé
+    </a>
+    <a class="nav-item" onclick="go('planos')">
+      <span class="icon">📋</span> Os Planos
+    </a>
+    <a class="nav-item" onclick="go('fluxo')">
+      <span class="icon">🔄</span> Quem faz o quê
+    </a>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-label">Materiais</div>
+    <a class="nav-item" onclick="go('comunicado')">
+      <span class="icon">📢</span> Comunicado
+    </a>
+    <a class="nav-item" onclick="go('roteiro')">
+      <span class="icon">🎙️</span> Roteiro — Polos
+    </a>
+  </div>
+</nav>
+
+<!-- ── MAIN ── -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:14px;">
+      <div class="hamburger" id="hamburger" onclick="toggleSidebar()">
+        <span></span><span></span><span></span>
+      </div>
+      <h2 id="topbar-title">Início</h2>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="meta">Abril 2026</span>
+      <span class="interno-badge">🔒 Interno</span>
+    </div>
+  </div>
+
+  <!-- ══ PAGE: HOME ══ -->
+  <div class="page active" id="page-home">
+    <div class="home-hero">
+      <span class="label">UniFECAF · Inteligência Institucional</span>
+      <h1>Programa Pausa Financeira</h1>
+      <p>Material de consulta interna para o time. Acesse o menu lateral para navegar pelos planos, fluxo operacional, comunicado e roteiro de apresentação para os polos.</p>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card s1">
+        <div class="num">22mil+</div>
+        <p>alunos evadidos ouvidos nas pesquisas Principia e UniFECAF</p>
+      </div>
+      <div class="stat-card s2">
+        <div class="num">82,9%</div>
+        <p>dos respondentes que saíram declararam que ainda querem voltar</p>
+      </div>
+      <div class="stat-card s3">
+        <div class="num">3</div>
+        <p>planos combinávies de apoio — sem desconto generalizado</p>
+      </div>
+    </div>
+
+    <div class="quick-nav">
+      <div class="qcard" onclick="go('planos')">
+        <div class="qicon" style="background:var(--blue-ll);">📋</div>
+        <div>
+          <h3>Ver os Planos A, B e C</h3>
+          <p>Entenda o cardápio de benefícios e como combiná-los para cada situação.</p>
+        </div>
+      </div>
+      <div class="qcard" onclick="go('fluxo')">
+        <div class="qicon" style="background:var(--orange-l);">🔄</div>
+        <div>
+          <h3>Quem faz o quê</h3>
+          <p>O papel de cada área — polo, onboarding, Agiliza, cobrança e permanência.</p>
+        </div>
+      </div>
+      <div class="qcard" onclick="go('comunicado')">
+        <div class="qicon" style="background:var(--green-l);">📢</div>
+        <div>
+          <h3>Comunicado para o grupo</h3>
+          <p>Texto pronto para enviar no grupo da empresa com as diretrizes do programa.</p>
+        </div>
+      </div>
+      <div class="qcard" onclick="go('roteiro')">
+        <div class="qicon" style="background:var(--purple-l);">🎙️</div>
+        <div>
+          <h3>Roteiro — Apresentação Polos</h3>
+          <p>Script de 7 a 10 minutos para a reunião online com os polos de ensino.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE: CAMPANHA ══ -->
+  <div class="page" id="page-campanha">
+    <div class="section-label"><div class="num">0</div><h2>Por que estamos fazendo isso?</h2></div>
+    <div class="card">
+      <p style="font-size:14.5px;color:var(--text-s);line-height:1.75;margin-bottom:24px;">
+        As melhores marcas do mundo não conquistam pelo preço — conquistam pelo que fazem quando as coisas ficam difíceis. Duas pesquisas — a da <strong style="color:var(--text)">Principia</strong> e a <strong style="color:var(--text)">pesquisa interna UniFECAF</strong> — reunindo mais de <strong style="color:var(--text)">22 mil alunos evadidos</strong>, apontaram o motivo financeiro como o principal fator de cancelamento, mais da metade dos casos. Não necessariamente o preço da mensalidade — que já está abaixo do mercado — mas a falta de flexibilidade quando o dinheiro aperta. A UniFECAF ouviu — e decidiu agir. O Programa Pausa Financeira é a resposta concreta a esse sinal: um gesto de acolhimento real que transforma a instituição em algo que poucos concorrentes conseguem ser — uma <strong style="color:var(--text)">faculdade que fica do lado do aluno quando ele mais precisa</strong>. Mais do que reter, queremos construir pertencimento. E pertencimento se prova nos momentos difíceis.
+      </p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div style="background:var(--blue-ll);border-left:4px solid var(--blue-m);border-radius:10px;padding:18px 20px;">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--blue-m);margin-bottom:6px;">A virada de chave</div>
+          <p style="font-size:13.5px;color:var(--text-s);line-height:1.55;">A evasão raramente é uma decisão — é um acúmulo silencioso. O aluno vai se distanciando, para de acessar, deixa de pagar. Quando age cedo, a UniFECAF interrompe esse ciclo antes que ele se feche.</p>
+        </div>
+        <div style="background:var(--orange-l);border-left:4px solid var(--orange);border-radius:10px;padding:18px 20px;">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--orange);margin-bottom:6px;">Pertencimento que retém</div>
+          <p style="font-size:13.5px;color:var(--text-s);line-height:1.55;">Aluno que sente que a instituição o vê de verdade não abandona o curso — ele luta para ficar. O programa transforma um momento de crise em um ponto de conexão emocional duradouro.</p>
+        </div>
+        <div style="background:var(--green-l);border-left:4px solid var(--green);border-radius:10px;padding:18px 20px;">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--green);margin-bottom:6px;">Uma marca com personalidade</div>
+          <p style="font-size:13.5px;color:var(--text-s);line-height:1.55;">Flexibilidade com responsabilidade é raro no ensino superior. Ao agir assim, a UniFECAF cria um diferencial que nenhum concorrente copia facilmente — porque não é um produto, é uma cultura.</p>
+        </div>
+        <div style="background:var(--purple-l);border-left:4px solid var(--purple);border-radius:10px;padding:18px 20px;">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--purple);margin-bottom:6px;">Onde o impacto é maior</div>
+          <p style="font-size:13.5px;color:var(--text-s);line-height:1.55;">Os primeiros semestres são o momento mais crítico — o vínculo ainda está sendo formado e qualquer turbulência pode romper tudo. É exatamente aqui que o programa concentra sua energia.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE: TRAVA ══ -->
+  <div class="page" id="page-trava">
+    <div class="section-label"><div class="num">1</div><h2>Trava de Boa-Fé</h2></div>
+    <div class="trava-box">
+      <div class="trava-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          <circle cx="12" cy="16" r="1" fill="#fff"/>
+        </svg>
+      </div>
+      <div>
+        <h3>Pagamento mínimo de R$ 100 — só para quem nunca pagou nada</h3>
+        <p>Antes de acessar qualquer benefício do programa, o aluno que <strong>nunca realizou nenhum pagamento</strong> precisa pagar R$ 100. Nenhum documento é exigido — é simples e direto.</p>
+        <p>No caso do Plano C, os R$ 100 entram automaticamente como a primeira parcela do acordo.</p>
+        <div class="trava-badge">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Prazo: 5 dias úteis — após isso, a solicitação é cancelada automaticamente
+        </div>
+      </div>
+    </div>
+    <div class="info-box">
+      <svg style="flex-shrink:0;margin-top:2px;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <p><strong>Por que R$ 100?</strong> O valor cumpre dois papéis: <strong>gerar comprometimento real</strong> — quem paga, mesmo que pouco, valoriza mais o benefício — e <strong>medir intenção genuína</strong> — quem dá esse passo sinaliza que quer continuar. É um filtro simples que protege o programa e direciona o esforço da equipe para quem realmente quer ficar.</p>
+    </div>
+    <div class="info-box" style="background:var(--red-l);border-color:var(--red);">
+      <svg style="flex-shrink:0;margin-top:2px;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <p style="color:#8B0000;"><strong>Exclusividade da Cobrança e Permanência SEDE:</strong> somente essas equipes estão autorizadas a gerar renegociações e receber pagamentos vinculados ao programa. Nenhum outro setor — incluindo polo e Agiliza — pode formalizar acordos ou registrar recebimentos.</p>
+    </div>
+  </div>
+
+  <!-- ══ PAGE: PLANOS ══ -->
+  <div class="page" id="page-planos">
+    <div class="section-label"><div class="num">2</div><h2>O cardápio de benefícios</h2></div>
+    <div class="planos-grid">
+      <div class="plano-card plano-a">
+        <span class="plano-badge">Plano A</span>
+        <span class="plano-emoji">📅</span>
+        <h3>Férias da mensalidade</h3>
+        <p class="desc">Um mês inteiro sem pagar nada.</p>
+        <div class="plano-detalhe">
+          <span>Isenção total de 1 mensalidade</span>
+          <span>Pode usar 1 vez a cada 12 meses</span>
+          <span>Para quem teve um susto financeiro pontual (desemprego, doença etc.)</span>
+        </div>
+      </div>
+      <div class="plano-card plano-b">
+        <span class="plano-badge">Plano B</span>
+        <span class="plano-emoji">📉</span>
+        <h3>Metade do preço por 3 meses</h3>
+        <p class="desc">Paga 50% da mensalidade durante 3 meses seguidos. No 4º mês volta ao valor normal.</p>
+        <div class="plano-detalhe">
+          <span>50% de desconto temporário — 3 meses</span>
+          <span>Pode usar 1 vez na vida acadêmica</span>
+          <span>Para quem está passando por um período difícil mais longo</span>
+        </div>
+      </div>
+      <div class="plano-card plano-c">
+        <span class="plano-badge">Plano C</span>
+        <span class="plano-emoji">📋</span>
+        <h3>Parcela a dívida antiga</h3>
+        <p class="desc">Dívida de semestres anteriores em até 18x sem juros, ou em até 6x para o fim do curso. Disponível para alunos ativos e ex-alunos. <em style="color:var(--green);font-style:normal;font-weight:600;">Salvo último semestre — verificar condições.</em></p>
+        <div class="plano-detalhe">
+          <span>Até 18x sem juros (ou até 6x para encerramento)</span>
+          <span>Pode usar 1 vez na vida acadêmica</span>
+          <span>Para quem acumulou dívida e quer regularizar</span>
+        </div>
+      </div>
+    </div>
+    <div class="combo-box">
+      <div class="combo-icon">✦</div>
+      <div>
+        <h3>Os planos podem ser usados juntos — como um cardápio!</h3>
+        <p>A Cobrança ou Permanência monta o pacote certo para cada situação.</p>
+        <div class="pills">
+          <span class="pill light">A</span>
+          <span class="pill light">B</span>
+          <span class="pill light">C</span>
+          <span class="pill">A + B</span>
+          <span class="pill">A + C</span>
+          <span class="pill">B + C</span>
+          <span class="pill" style="opacity:1">A + B + C</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE: FLUXO ══ -->
+  <div class="page" id="page-fluxo">
+    <div class="section-label"><div class="num">3</div><h2>Quem faz o quê?</h2></div>
+    <div class="card">
+      <div class="fluxo-steps">
+        <div class="fluxo-step">
+          <div class="step-dot" style="background:#EDF5FF;">📡</div>
+          <div class="step-content">
+            <span class="step-tag" style="background:#EDF5FF;color:var(--blue-m);">Polo de Ensino</span>
+            <h4>Identifica o sinal e avisa</h4>
+            <p>O polo percebe quando o aluno menciona dificuldade financeira, para de acessar a plataforma ou pergunta sobre trancamento. Registra no sistema e encaminha para a Cobrança ou Permanência.</p>
+          </div>
+        </div>
+        <div class="fluxo-step">
+          <div class="step-dot" style="background:#EDF5FF;">🎓</div>
+          <div class="step-content">
+            <span class="step-tag" style="background:#EDF5FF;color:var(--blue-m);">Onboarding</span>
+            <h4>Apresenta as opções desde o início</h4>
+            <p>Nos primeiros 30 dias, além de apresentar a plataforma, já menciona de forma leve que a UniFECAF tem opções de apoio financeiro. Aluno que sabe que tem saída não some silenciosamente. O maior gargalo de trancamento está no início — por isso o onboarding é a primeira linha de prevenção.</p>
+          </div>
+        </div>
+        <div class="fluxo-step">
+          <div class="step-dot" style="background:var(--purple-l);">⚡</div>
+          <div class="step-content">
+            <span class="step-tag" style="background:var(--purple-l);color:var(--purple);">Agiliza — Suporte</span>
+            <h4>Encaminha imediatamente</h4>
+            <p>Quando o aluno menciona dificuldade financeira, o Agiliza encaminha imediatamente para a Cobrança com prioridade. A proposta chega ao aluno instantaneamente.</p>
+          </div>
+        </div>
+        <div class="fluxo-step">
+          <div class="step-dot" style="background:var(--orange-l);">💼</div>
+          <div class="step-content">
+            <span class="step-tag" style="background:var(--orange-l);color:var(--orange);">Cobrança</span>
+            <h4>Monta o pacote e concede o benefício</h4>
+            <p>Verifica o histórico de pagamento, aplica a trava de R$ 100 se necessário, monta o pacote certo, oferece o cardápio de benefícios e formaliza tudo no sistema. Também lidera a campanha <strong>Volte UniFECAF</strong> de reativação de ex-alunos.</p>
+          </div>
+        </div>
+        <div class="fluxo-step" style="padding-bottom:0;">
+          <div class="step-dot" style="background:var(--green-l);">🛡️</div>
+          <div class="step-content">
+            <span class="step-tag" style="background:var(--green-l);color:var(--green);">Permanência</span>
+            <h4>Retém antes do trancamento</h4>
+            <p>Quando o aluno abre requerimento de trancamento, a Permanência apresenta o Programa como alternativa antes de processar o pedido.</p>
+          </div>
+        </div>
+      </div>
+      <div class="polo-alert">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+          <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+        <p>O polo <strong>NÃO</strong> concede nem baixa parcelas localmente. Ele identifica e encaminha — a decisão sempre fica com a Cobrança ou Permanência SEDE, com registro obrigatório no sistema.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE: COMUNICADO ══ -->
+  <div class="page" id="page-comunicado">
+    <div class="section-label"><div class="num">4</div><h2>Comunicado para o grupo</h2></div>
+    <button class="copy-btn" onclick="copyComunicado()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      Copiar texto
+    </button>
+    <div class="comunicado-body" id="comunicado-content">
+      <h1>📢 Programa Pausa Financeira — chegou a hora de mostrar quem somos</h1>
+      <p class="sub">UniFECAF · Inteligência Institucional · Abril de 2026 · Uso interno</p>
+
+      <p>Olá, time! 👋</p>
+      <p>Hoje quero compartilhar com vocês algo que vai além de uma ação comercial. O <strong>Programa Pausa Financeira</strong> é um posicionamento da UniFECAF sobre o tipo de instituição que queremos ser — e sobre como tratamos nossos alunos quando as coisas ficam difíceis.</p>
+
+      <h2>🔍 Por que estamos fazendo isso?</h2>
+      <p>Duas pesquisas — a da <strong>Principia</strong> e a nossa <strong>pesquisa interna UniFECAF</strong> — reunindo mais de <strong>22 mil alunos evadidos</strong>, apontaram o motivo financeiro como o principal fator declarado de cancelamento, em mais da metade dos casos. Não necessariamente o preço da mensalidade, que já está abaixo do mercado, mas a falta de flexibilidade quando o dinheiro aperta.</p>
+      <p>A UniFECAF ouviu — e decidiu agir. Mais do que números, esses dados são um sinal. E a nossa resposta é concreta: <strong>criar uma saída para quem está passando por dificuldade</strong>, antes que o distanciamento vire cancelamento. Queremos construir pertencimento real — e pertencimento se prova nos momentos difíceis. Poucas instituições fazem isso. Essa é a nossa chance de ser diferente de verdade.</p>
+
+      <h2>📋 Os planos disponíveis</h2>
+      <p><strong>📅 Plano A — Férias da mensalidade:</strong> um mês de isenção total. Pode ser usado 1 vez a cada 12 meses. Para quem teve um susto financeiro pontual — desemprego, doença, imprevisto.</p>
+      <p><strong>📉 Plano B — Metade do preço por 3 meses:</strong> 50% de desconto durante 3 meses seguidos, voltando ao valor normal no 4º mês. Pode ser usado 1 vez na vida acadêmica. Para quem está atravessando um período mais longo de dificuldade.</p>
+      <p><strong>📋 Plano C — Parcelamento da dívida antiga:</strong> dívida de semestres anteriores em até 18x sem juros, ou em até 6x para o fim do curso. Disponível para alunos ativos e ex-alunos. Salvo último semestre — verificar condições. Pode ser usado 1 vez na vida acadêmica.</p>
+      <p>Os planos podem ser combinados conforme a situação de cada aluno.</p>
+
+      <h2>🔒 A trava de boa-fé</h2>
+      <p>Alunos que <strong>nunca realizaram nenhum pagamento</strong> precisam pagar <strong>R$ 100</strong> antes de acessar qualquer benefício — sem documentos, sem burocracia. O prazo é de 5 dias úteis. Quem já realizou ao menos um pagamento vai direto para os planos, sem essa etapa.</p>
+      <div class="nota">💡 <strong>Por que R$ 100?</strong> O valor cumpre dois papéis: gerar comprometimento real — quem paga, mesmo que pouco, valoriza mais o benefício — e medir intenção genuína. É um filtro simples que protege o programa e direciona o esforço da equipe para quem realmente quer ficar.</div>
+
+      <h2>🤝 O papel de cada área</h2>
+      <p>🏫 <strong>Polo de Ensino</strong> — identifica sinais e encaminha para Cobrança ou Permanência. Não concede nem baixa parcelas.<br>
+      🎓 <strong>Onboarding</strong> — apresenta as opções de apoio nos primeiros 30 dias. O onboarding é a primeira linha de prevenção.<br>
+      ⚡ <strong>Agiliza</strong> — quando o aluno menciona dificuldade financeira, encaminha imediatamente para a Cobrança.<br>
+      💼 <strong>Cobrança</strong> — monta o pacote, concede o benefício e formaliza no sistema. Lidera a campanha <strong>Volte UniFECAF</strong>.<br>
+      🛡️ <strong>Permanência</strong> — apresenta o programa antes de processar qualquer requerimento de trancamento.</p>
+
+      <div class="destaque">⚠️ <strong>Regra fundamental:</strong> somente as equipes de <strong>Cobrança e Permanência SEDE</strong> estão autorizadas a gerar renegociações e receber pagamentos. Nenhum outro setor — incluindo polo e Agiliza — pode formalizar acordos ou registrar recebimentos.</div>
+
+      <h2>📊 Rastreabilidade e acompanhamento</h2>
+      <p>Já criamos <strong>parâmetros no sistema</strong> para registrar e acompanhar todas as ações do programa — concessões, acordos, pagamentos e reativações. Todo benefício concedido precisa estar devidamente registrado. Isso garante transparência e permite que a liderança acompanhe os resultados em tempo real.</p>
+
+      <p>Esse programa é grande porque é simples, humano e verdadeiro. Vamos mostrar aos nossos alunos que a UniFECAF é diferente — não só no que oferece, mas em como cuida. 💙</p>
+
+      <div class="assinatura">Inteligência Institucional — UniFECAF · Abril de 2026</div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE: ROTEIRO ══ -->
+  <div class="page" id="page-roteiro">
+    <div class="section-label"><div class="num">5</div><h2>Roteiro — Apresentação para os Polos</h2></div>
+    <p style="font-size:13px;color:var(--gray-m);margin-bottom:24px;">Reunião online · Tom direto e objetivo · 7–10 minutos</p>
+
+    <div class="roteiro-bloco r1">
+      <div class="rtag">Bloco 1</div>
+      <div class="tempo">⏱ 1 minuto</div>
+      <h3>Abertura</h3>
+      <div class="fala">"Bom dia/tarde! Vou ser rápida — vim apresentar um programa novo que começa agora e que vai mudar a forma como a gente lida com alunos em risco financeiro. Se vocês tiverem dúvidas, a gente resolve no final."</div>
+    </div>
+
+    <div class="roteiro-bloco r2">
+      <div class="rtag">Bloco 2</div>
+      <div class="tempo">⏱ 1,5 minutos</div>
+      <h3>Contexto — as pesquisas</h3>
+      <div class="fala">"Duas pesquisas — a da Principia e a nossa pesquisa interna — ouviram mais de 22 mil alunos evadidos. O motivo financeiro aparece como o principal fator declarado de cancelamento, em mais da metade dos casos. A UniFECAF decidiu responder a esse sinal de forma concreta. Não com desconto generalizado — mas com acolhimento direcionado para quem realmente precisa."</div>
+    </div>
+
+    <div class="roteiro-bloco r3">
+      <div class="rtag">Bloco 3</div>
+      <div class="tempo">⏱ 2 minutos</div>
+      <h3>O programa — os três planos</h3>
+      <p style="font-size:13px;color:var(--gray-m);margin-bottom:10px;">Compartilhe a tela com o material visual durante esse bloco.</p>
+      <div class="fala">"Criamos três planos que podem ser usados isolados ou combinados:<br><br>
+      Plano A — um mês de férias da mensalidade. Para sustos pontuais.<br>
+      Plano B — 50% de desconto por 3 meses. Para quem está num momento mais longo de dificuldade.<br>
+      Plano C — parcelamento da dívida antiga em até 18x sem juros. Para quem acumulou e quer regularizar.<br><br>
+      Antes de acessar qualquer benefício, alunos que nunca pagaram nada precisam fazer um pagamento de R$ 100. Isso é a nossa trava de boa-fé — mede intenção real e garante comprometimento."</div>
+    </div>
+
+    <div class="roteiro-bloco r4">
+      <div class="rtag">Bloco 4 — mais importante</div>
+      <div class="tempo">⏱ 2 minutos</div>
+      <h3>O papel do polo</h3>
+      <div class="fala">"O papel do polo é identificar e encaminhar — só isso.<br><br>
+      Quando um aluno mencionar dificuldade financeira, falar em trancar, parar de acessar a plataforma — o polo registra no sistema e encaminha para a Cobrança ou Permanência SEDE.<br><br>
+      O polo não concede benefício. O polo não baixa parcela. O polo não faz acordo.<br><br>
+      Toda renegociação e todo recebimento são exclusividade da Cobrança e Permanência SEDE. Isso garante rastreabilidade e segurança para todo mundo — inclusive para vocês. Já criamos parâmetros no sistema para registrar e acompanhar tudo em tempo real."</div>
+    </div>
+
+    <div class="roteiro-bloco r5">
+      <div class="rtag">Bloco 5</div>
+      <div class="tempo">⏱ 1 minuto</div>
+      <h3>Fechamento</h3>
+      <div class="fala">"O que preciso de vocês é simples: fiquem atentos aos sinais, encaminhem rápido e registrem no sistema. Quanto antes a gente chega no aluno, maior a chance de mantê-lo.<br><br>
+      Esse programa é um diferencial real da UniFECAF — e o polo é a linha de frente para que ele funcione.<br><br>
+      Alguma dúvida?"</div>
+    </div>
+
+    <div class="dicas-box">
+      <h3>💡 Dicas para a reunião</h3>
+      <ul>
+        <li>Compartilhe a tela com o material visual durante a apresentação dos planos</li>
+        <li>Não se prenda ao script — use como guia, fale com naturalidade</li>
+        <li>Se perguntarem sobre casos específicos de desconto ou acordo → redirecione: "Isso vai direto para a Cobrança, que tem autonomia para avaliar."</li>
+        <li>Se perguntarem sobre prazos → o programa já está ativo</li>
+      </ul>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<script>
+  const pages = {
+    home:       { el: 'page-home',       title: 'Início' },
+    campanha:   { el: 'page-campanha',   title: 'Por que fazemos isso' },
+    trava:      { el: 'page-trava',      title: 'Trava de Boa-Fé' },
+    planos:     { el: 'page-planos',     title: 'Os Planos' },
+    fluxo:      { el: 'page-fluxo',      title: 'Quem faz o quê' },
+    comunicado: { el: 'page-comunicado', title: 'Comunicado' },
+    roteiro:    { el: 'page-roteiro',    title: 'Roteiro — Polos' },
+  };
+
+  function go(key) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById(pages[key].el).classList.add('active');
+    document.getElementById('topbar-title').textContent = pages[key].title;
+    document.querySelectorAll('.nav-item').forEach(n => {
+      if (n.getAttribute('onclick') === `go('${key}')`) n.classList.add('active');
+    });
+    closeSidebar();
+    window.scrollTo(0, 0);
+  }
+
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('overlay').classList.toggle('show');
+  }
+  function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('overlay').classList.remove('show');
+  }
+
+  function copyComunicado() {
+    const el = document.getElementById('comunicado-content');
+    const text = el.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.querySelector('.copy-btn');
+      btn.textContent = '✅ Copiado!';
+      setTimeout(() => {
+        btn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copiar texto`;
+      }, 2000);
+    });
+  }
+</script>
+</body>
+</html>
