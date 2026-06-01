@@ -127,61 +127,6 @@ body { font-family: var(--font); background: var(--gray-100); color: var(--gray-
 .doc-footer { background: var(--blue-dark); color: rgba(255,255,255,0.4); text-align: center; padding: 28px 48px; font-size: 12px; display: flex; align-items: center; justify-content: space-between; margin-top: 80px; }
 .doc-footer img { height: 140px; filter: brightness(0) invert(1); opacity: 0.9; }
 
-/* ── MOBILE RESPONSIVE ───────────────────────────────────────── */
-@media (max-width: 768px) {
-  /* Cover */
-  .cover { padding: 32px 24px; min-height: auto; }
-  .cover-top { flex-direction: column; align-items: flex-start; gap: 16px; }
-  .cover-logo img { height: 120px; }
-  .cover-title { font-size: 38px; }
-  .cover-subtitle { font-size: 15px; margin-bottom: 28px; }
-  .cover-stats { flex-direction: column; gap: 18px; }
-  .cover-stat-div { display: none; }
-  .cover-stat-num { font-size: 30px; }
-  .cover-body { padding: 40px 0 24px; }
-  .cover-footer { flex-direction: column; gap: 16px; align-items: flex-start; }
-
-  /* Page */
-  .page { padding: 0 16px 48px; }
-
-  /* Section titles */
-  .section-title { font-size: 26px; }
-  .section-wrap { margin-top: 48px; }
-
-  /* Tone cards: 1 column */
-  .tones-grid { grid-template-columns: 1fr; gap: 10px; }
-
-  /* Channel & Var tables: scrollable */
-  .ch-table, .var-table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; white-space: nowrap; }
-  .ch-table thead, .ch-table tbody,
-  .var-table thead, .var-table tbody { display: table; width: 100%; }
-
-  /* Message grid: 1 column */
-  .msgs-grid { grid-template-columns: 1fr; }
-
-  /* Phase header */
-  .phase-hdr { gap: 8px; padding: 12px 16px; }
-  .phase-hdr-days { margin-left: 0; width: 100%; }
-
-  /* Timeline: horizontal scroll */
-  .timeline-section { padding: 20px 16px; overflow-x: auto; }
-  .tl-row { overflow-x: auto; }
-  .tl-legend { flex-wrap: wrap; gap: 10px; }
-
-  /* Doc footer */
-  .doc-footer { flex-direction: column; align-items: center; gap: 16px; padding: 24px 16px; text-align: center; }
-  .doc-footer img { height: 80px; }
-
-  /* Print button */
-  button[onclick="window.print()"] { bottom: 16px; right: 16px; padding: 12px 18px; font-size: 13px; }
-}
-
-@media (max-width: 480px) {
-  .cover-title { font-size: 30px; }
-  .section-title { font-size: 22px; }
-  .msg-body { font-size: 11px; }
-}
-
 @media print {
   body { background: white; }
   .cover { min-height: auto; }
@@ -474,7 +419,7 @@ Dúvidas? A gente tá aqui: {{5}} 😉</div>
 
 Seu boleto da {{2}} vence em 2 dias ({{3}}) — não perca seu desconto de pontualidade!
 
-🎯 Quem paga até o vencimento garanta o benefício!
+🎯 Quem paga até o vencimento garante o benefício!
 💳 {{4}}
 
 Precisando de ajuda: {{5}} 💬</div>
@@ -511,7 +456,7 @@ Equipe Financeira — {{2}}</div>
       </div>
       <div class="strategy-note" style="background:#F0FBF6;border-color:#1D9E75;color:var(--gray-700)">
         <span style="font-size:16px;flex-shrink:0">⚠️</span>
-        <span>Dia 0: última chance do desconto de pontualidade. A partir do dia 1: juros e multa entram — ainda é possível negociar. Reforçar que débito em aberto bloqueia a matrícula no próximo semestre.</span>
+        <span>Dia 0: última chance do desconto de pontualidade. A partir do dia 1: juros e multas entram — ainda é possível negociar. Reforçar que débito em aberto bloqueia a matrícula no próximo semestre.</span>
       </div>
       <div class="msgs-grid">
         <div class="msg-card">
@@ -523,12 +468,15 @@ Equipe Financeira — {{2}}</div>
           
           <div class="msg-body">{{1}}, hoje é o último dia! ⏰
 
-Pague agora e ainda garante seu desconto de pontualidade da {{2}}!
+Você paga agora e ainda garante seu desconto de pontualidade aqui na {{2}}!
 
 📅 Vencimento: {{3}}
 🔗 Pague aqui: {{4}}
 
 Depois de hoje os juros passam a ser cobrados. Não perca esse benefício!
+
+Não deixe para depois. Não fique inadimplente — sua jornada acadêmica é importante demais para ser interrompida por isso! 💙
+
 Precisa de ajuda: {{5}} 🙂</div>
           <div class="msg-footer">&#10003; {{1}} nome &middot; {{2}} empresa &middot; {{3}} vencimento &middot; {{4}} link &middot; {{5}} telefone</div>
         </div>
@@ -543,7 +491,7 @@ Precisa de ajuda: {{5}} 🙂</div>
 
 Informamos que hoje, {{3}}, é o último dia para efetuar o pagamento do seu boleto junto à {{2}} com desconto de pontualidade.
 
-O pagamento após esta data implicará na cobrança de juros e multa sobre o valor original.
+O pagamento após esta data implicará na cobrança de juros e multas sobre o valor original.
 
 Realize o pagamento pelo link: {{4}}
 Dúvidas ou condições especiais: {{5}}
@@ -563,7 +511,9 @@ Equipe Financeira — {{2}}</div>
 
 Seu boleto da {{2}} venceu ontem ({{3}}) e os juros já começaram a correr.
 
-Ainda é cedo e a gente pode negociar condições 🤝
+Ainda é cedo e a gente pode resolver isso rapidinho — não deixe um boleto atrasar sua caminhada! 💙
+
+🤝 Podemos negociar condições:
 🔗 {{4}} | 📞 {{5}} 💬</div>
           <div class="msg-footer">&#10003; {{1}} nome &middot; {{2}} empresa &middot; {{3}} vencimento &middot; {{4}} link &middot; {{5}} telefone</div>
         </div>
@@ -576,9 +526,11 @@ Ainda é cedo e a gente pode negociar condições 🤝
           
           <div class="msg-body">{{1}}, seu boleto da {{2}} está em aberto há 3 dias 🗓️
 
-📅 Venceu em: {{3}} — juros e multa já estão sendo aplicados.
+📅 Venceu em: {{3}}
 
-Quanto antes regularizar, menos encargos acumulam. Ainda dá pra negociar!
+Juros e multas já estão sendo aplicados — quanto antes regularizar, menos você paga.
+
+Não deixe isso crescer! Sua continuidade nos estudos é o mais importante. 💙
 👉 {{4}} | 📞 {{5}}</div>
           <div class="msg-footer">&#10003; {{1}} nome &middot; {{2}} empresa &middot; {{3}} vencimento &middot; {{4}} link &middot; {{5}} telefone</div>
         </div>
@@ -609,13 +561,16 @@ Equipe Financeira — {{2}}</div>
             <span class="msg-day">Dia 5</span>
           </div>
           
-          <div class="msg-body">{{1}}, boleto da {{2}} em aberto 😕
+          <div class="msg-body">{{1}}, seu boleto da {{2}} está há 5 dias em aberto. ⚠️
 
 📅 Venceu em: {{3}}
-⚠️ Os encargos aumentam a cada dia.
 
-Regularize agora: 👉 {{4}}
-Quer negociar? Fala com a gente: {{5}}</div>
+Os juros e multas aumentam a cada dia que passa — quanto antes regularizar, menos você paga.
+
+Não deixe essa situação crescer e comprometer sua jornada acadêmica. A gente quer te ver em sala de aula! 💙
+
+👉 Regularize agora: {{4}}
+📞 Prefere negociar? Fala com a gente: {{5}}</div>
           <div class="msg-footer">&#10003; {{1}} nome &middot; {{2}} empresa &middot; {{3}} vencimento &middot; {{4}} link &middot; {{5}} telefone</div>
         </div>
         <div class="msg-card">
@@ -625,13 +580,13 @@ Quer negociar? Fala com a gente: {{5}}</div>
             <span class="msg-day">Dia 10</span>
           </div>
           
-          <div class="msg-body">Oi {{1}} 👋 10 dias de atraso e os juros continuam crescendo.
+          <div class="msg-body">Oi {{1}}! 👋 Já se passaram 10 dias do vencimento e os juros e multas continuam crescendo.
 
 🏫 {{2}} | 📅 Venceu em: {{3}}
 
-⚠️ Atenção: débitos prolongados podem resultar em inclusão no SPC/Serasa.
+Sabemos que imprevistos acontecem — e a gente está aqui para te ajudar a resolver. Quanto antes regularizar, menor o valor total. 💙
 
-Quanto antes regularizar, menor o valor total. Podemos negociar condições!
+Podemos negociar condições:
 🔗 {{4}} | 📞 {{5}}</div>
           <div class="msg-footer">&#10003; {{1}} nome &middot; {{2}} empresa &middot; {{3}} vencimento &middot; {{4}} link &middot; {{5}} telefone</div>
         </div>
@@ -644,7 +599,7 @@ Quanto antes regularizar, menor o valor total. Podemos negociar condições!
           <div class="msg-subject">Assunto: 10 dias em atraso — negocie agora e reduza os encargos</div>
           <div class="msg-body">Prezado(a) {{1}},
 
-Seu débito junto à {{2}}, com vencimento em {{3}}, encontra-se em atraso há 10 dias, com juros e multa acumulando diariamente.
+Seu débito junto à {{2}}, com vencimento em {{3}}, encontra-se em atraso há 10 dias, com juros e multas acumulando diariamente.
 
 Alertamos que a manutenção do débito em aberto poderá gerar restrições no acesso a serviços e documentos acadêmicos, além de impedir a progressão para semestres seguintes. Caso o débito não seja regularizado, a inclusão em cadastros de inadimplentes (SPC/Serasa) poderá ser aplicada.
 
@@ -664,9 +619,9 @@ Equipe Financeira — {{2}}</div>
           
           <div class="msg-body">{{1}}, 15 dias de atraso ⚠️
 
-Seu boleto da {{2}} (venc. {{3}}) segue em aberto e os encargos crescem.
+Seu boleto da {{2}} (venc. {{3}}) segue em aberto e os juros e multas crescem a cada dia.
 
-Regularize o quanto antes — débitos em aberto impedem a matrícula no próximo semestre e podem resultar em inclusão no SPC/Serasa.
+Não deixe isso atrapalhar sua jornada acadêmica — resolva agora e siga em frente com seus estudos! 💙
 🔗 {{4}} | 📞 {{5}} 🤝</div>
           <div class="msg-footer">&#10003; {{1}} nome &middot; {{2}} empresa &middot; {{3}} vencimento &middot; {{4}} link &middot; {{5}} telefone</div>
         </div>
@@ -681,8 +636,10 @@ Regularize o quanto antes — débitos em aberto impedem a matrícula no próxim
 
 Débito com a {{2}} | 📅 Venc.: {{3}}
 
-⚠️ Com o débito em aberto você não consegue avançar para o próximo semestre e pode ser incluído no SPC/Serasa.
-Ainda dá tempo de resolver — negocie agora:
+⚠️ Os juros e multas já acumularam e o valor cresce a cada dia.
+
+A gente sabe o quanto sua formação é importante — não deixe um débito ser um obstáculo na sua carreira. Ainda dá tempo de resolver! 💙
+Negocie agora:
 👉 {{4}} | 📞 {{5}}</div>
           <div class="msg-footer">&#10003; {{1}} nome &middot; {{2}} empresa &middot; {{3}} vencimento &middot; {{4}} link &middot; {{5}} telefone</div>
         </div>
@@ -717,7 +674,9 @@ Equipe Financeira — {{2}}</div>
 
 🏫 {{2}} | 📅 Venceu em: {{3}}
 
-⚠️ Com débito em aberto você não consegue se matricular no próximo semestre e corre o risco de ser incluído no SPC/Serasa. Temos condições para negociar!
+⚠️ Os juros e multas já acumularam bastante — quanto antes você regularizar, menos paga.
+
+Sua jornada acadêmica não pode esperar! Temos condições para negociar. 💙
 💳 {{4}} | 📞 {{5}}</div>
           <div class="msg-footer">&#10003; {{1}} nome &middot; {{2}} empresa &middot; {{3}} vencimento &middot; {{4}} link &middot; {{5}} telefone</div>
         </div>
@@ -730,9 +689,9 @@ Equipe Financeira — {{2}}</div>
           
           <div class="msg-body">{{1}}, 1 mês de atraso ⚠️
 
-Débito com a {{2}} (venc. {{3}}) — sua matrícula no próximo semestre está bloqueada e a inclusão no SPC/Serasa pode acontecer a qualquer momento.
+Débito com a {{2}} (venc. {{3}}) — os juros e multas já acumularam um mês inteiro.
 
-Vamos encontrar uma solução antes disso? 🤝
+Não deixe isso comprometer seus planos acadêmicos. A gente quer te ver crescendo na sua carreira — vamos encontrar uma solução juntos? 🤝💙
 🔗 {{4}} | 📞 {{5}}</div>
           <div class="msg-footer">&#10003; {{1}} nome &middot; {{2}} empresa &middot; {{3}} vencimento &middot; {{4}} link &middot; {{5}} telefone</div>
         </div>
@@ -747,7 +706,7 @@ Vamos encontrar uma solução antes disso? 🤝
 
 Seu débito junto à {{2}}, com vencimento em {{3}}, completa hoje 30 dias de atraso.
 
-Informamos que, enquanto o débito permanecer em aberto, a matrícula nos semestres seguintes estará bloqueada, além das restrições já vigentes no acesso a serviços e documentos acadêmicos. A inclusão em cadastros de proteção ao crédito (SPC/Serasa) poderá ser aplicada caso o débito não seja regularizado em breve.
+Alertamos que a continuidade do débito em aberto poderá resultar em inclusão nos cadastros de proteção ao crédito (SPC/Serasa). Não deixe os juros e multas crescerem mais.
 
 Nossa equipe está disponível para negociar condições de pagamento:
 Pagamento: {{4}} | Negociação: {{5}}
@@ -780,11 +739,9 @@ Equipe Financeira — {{2}}</div>
 
 Débito com a {{2}} | 📅 Venceu em: {{3}}
 
-🚨 Seu nome já está sendo incluído no SPC/Serasa.
+⚠️ Atenção: débitos prolongados resultam em inclusão no SPC/Serasa — regularize antes disso!
 
 Estamos próximos de uma nova data de pagamento — podemos zerar os encargos se você regularizar agora! 🎯
-
-Com débito em aberto você também não avança para o próximo semestre.
 
 🔗 {{4}} | 📞 {{5}}</div>
           <div class="msg-footer">&#10003; {{1}} nome &middot; {{2}} empresa &middot; {{3}} vencimento &middot; {{4}} link &middot; {{5}} telefone</div>
@@ -798,11 +755,11 @@ Com débito em aberto você também não avança para o próximo semestre.
           <div class="msg-subject">Assunto: 41 dias em atraso — encargos crescendo e matrícula bloqueada</div>
           <div class="msg-body">Prezado(a) {{1}},
 
-Seu débito junto à {{2}}, com vencimento em {{3}}, encontra-se em atraso há 41 dias, com juros e multa acumulando sobre o valor original.
+Seu débito junto à {{2}}, com vencimento em {{3}}, encontra-se em atraso há 41 dias, com juros e multas acumulando sobre o valor original.
 
-Informamos que seu nome já foi incluído nos cadastros de proteção ao crédito (SPC/Serasa). Enquanto o débito permanecer em aberto, a matrícula nos semestres seguintes estará bloqueada, além das demais restrições acadêmicas já aplicadas.
+Informamos que alertamos que a manutenção do débito em aberto poderá resultar em inclusão nos cadastros de proteção ao crédito (SPC/Serasa).
 
-Nossa equipe financeira está disponível para apresentar condições de negociação — a regularização também resulta na retirada do seu nome dos cadastros de inadimplentes:
+Nossa equipe financeira está disponível para apresentar condições de negociação:
 Regularize: {{4}} | Negocie: {{5}}
 
 Atenciosamente,
@@ -820,9 +777,9 @@ Equipe Financeira — {{2}}</div>
 
 📅 Venceu em: {{3}}
 
-🚨 Seu nome já consta no SPC/Serasa. Os encargos crescem a cada dia e sua matrícula no próximo semestre segue bloqueada.
+⚠️ Atenção: a inclusão no SPC/Serasa pode ocorrer caso o débito não seja regularizado.
 
-Quanto antes regularizar, menos você paga — e seu nome sai dos cadastros de inadimplentes. Podemos negociar condições!
+Quanto antes regularizar, menos você paga. Podemos negociar condições!
 
 🔗 {{4}} | 📞 {{5}}</div>
           <div class="msg-footer">&#10003; {{1}} nome &middot; {{2}} empresa &middot; {{3}} vencimento &middot; {{4}} link &middot; {{5}} telefone</div>
@@ -836,9 +793,9 @@ Quanto antes regularizar, menos você paga — e seu nome sai dos cadastros de i
           <div class="msg-subject">Assunto: 51 dias de atraso — negocie antes que o débito avance para cobrança</div>
           <div class="msg-body">Prezado(a) {{1}},
 
-Decorridos 51 dias do vencimento ({{3}}), seu débito junto à {{2}} permanece em aberto, com juros e multa acumulados.
+Decorridos 51 dias do vencimento ({{3}}), seu débito junto à {{2}} permanece em aberto, com juros e multas acumulados.
 
-Informamos que seu nome já consta nos cadastros de proteção ao crédito (SPC/Serasa). Enquanto o débito não for regularizado, a matrícula nos semestres seguintes permanecerá bloqueada. A quitação do débito resulta automaticamente na exclusão do seu nome dos cadastros de inadimplentes.
+Alertamos que a continuidade do débito em aberto poderá resultar em inclusão nos cadastros de proteção ao crédito (SPC/Serasa).
 
 Nossa equipe ainda pode apresentar condições de negociação:
 Pagamento: {{4}} | Negociação: {{5}}
@@ -858,11 +815,9 @@ Equipe Financeira — {{2}}</div>
 
 Débito com a {{2}} | 📅 Venceu em: {{3}}
 
-🚨 Seu nome já consta no SPC/Serasa.
+⚠️ Atenção: a inclusão no SPC/Serasa está próxima caso o débito não seja regularizado.
 
-Estamos chegando em uma nova data de pagamento — essa é uma boa oportunidade para zerar os encargos, regularizar sua situação e retirar seu nome dos cadastros de inadimplentes! 🎯
-
-Com o débito regularizado, sua matrícula no próximo semestre é desbloqueada na hora.
+Estamos chegando em uma nova data de pagamento — essa é uma boa oportunidade para zerar os encargos e regularizar sua situação antes que o débito avance para cobrança extrajudicial! 🎯
 
 📞 Fale com a gente agora: {{5}}
 🔗 {{4}}</div>
@@ -879,7 +834,7 @@ Com o débito regularizado, sua matrícula no próximo semestre é desbloqueada 
 
 🏫 {{2}} | 📅 Venceu em: {{3}}
 
-Seu nome já consta no SPC/Serasa e você não consegue avançar para o próximo semestre. Os encargos continuam crescendo — negocie agora antes que o débito avance para cobrança extrajudicial:
+Os encargos continuam crescendo — negocie agora antes que o débito avance para cobrança extrajudicial e resulte em inclusão no SPC/Serasa:
 🔗 {{4}} | 📞 {{5}}</div>
           <div class="msg-footer">&#10003; {{1}} nome &middot; {{2}} empresa &middot; {{3}} vencimento &middot; {{4}} link &middot; {{5}} telefone</div>
         </div>
@@ -894,7 +849,7 @@ Seu nome já consta no SPC/Serasa e você não consegue avançar para o próximo
 
 Seu débito junto à {{2}}, com vencimento em {{3}}, completa 61 dias sem pagamento. Os juros e multas acumulados representam um acréscimo significativo sobre o valor original.
 
-Informamos que seu nome já se encontra negativado nos cadastros de proteção ao crédito (SPC/Serasa). Enquanto o débito permanecer em aberto, a matrícula nos semestres seguintes estará bloqueada. Para evitar o encaminhamento do débito para cobrança extrajudicial, entre em contato imediatamente:
+Alertamos que, caso o débito não seja regularizado, a inclusão nos cadastros de proteção ao crédito (SPC/Serasa) será aplicada. Para evitar o encaminhamento do débito para cobrança extrajudicial, entre em contato imediatamente:
 
 Pagamento: {{4}} | Negociação: {{5}}
 
@@ -926,7 +881,7 @@ Equipe Financeira — {{2}}</div>
 
 📅 Venceu em: {{3}}
 
-Sem regularização você não consegue avançar para o próximo semestre. Temos condições para negociar — mas o prazo está se esgotando.
+Temos condições para negociar — mas o prazo está se esgotando.
 
 🔗 {{4}} | 📞 {{5}}</div>
           <div class="msg-footer">&#10003; {{1}} nome &middot; {{2}} empresa &middot; {{3}} vencimento &middot; {{4}} link &middot; {{5}} telefone</div>
@@ -940,9 +895,7 @@ Sem regularização você não consegue avançar para o próximo semestre. Temos
           <div class="msg-subject">Assunto: Débito em atraso — matrícula no próximo semestre bloqueada</div>
           <div class="msg-body">Prezado(a) {{1}},
 
-Seu débito junto à {{2}}, com vencimento em {{3}}, permanece em aberto. Restrições de serviços já estão ativas, e a matrícula nos semestres seguintes permanecerá bloqueada enquanto o débito não for regularizado.
-
-Esta ainda é uma fase em que a regularização é possível com condições de negociação. Entre em contato com nossa equipe financeira:
+Seu débito junto à {{2}}, com vencimento em {{3}}, permanece em aberto. Esta ainda é uma fase em que a regularização é possível com condições de negociação. Entre em contato com nossa equipe financeira:
 
 Pagamento: {{4}} | Negociação: {{5}}
 
@@ -961,7 +914,7 @@ Equipe Financeira — {{2}}</div>
 
 📅 Venceu em: {{3}}
 
-Essa é a última fase antes do encaminhamento para cobrança extrajudicial. Sem regularização, você não avança para o próximo semestre.
+Essa é a última fase antes do encaminhamento para cobrança extrajudicial e da inclusão do seu nome no SPC/Serasa.
 
 Regularize agora — ainda dá tempo de resolver de forma amigável.
 🔗 {{4}} | 📞 {{5}}</div>
@@ -978,9 +931,7 @@ Regularize agora — ainda dá tempo de resolver de forma amigável.
 
 Seu débito junto à {{2}}, com vencimento em {{3}}, completa 91 dias sem regularização.
 
-Esta é a última oportunidade de resolução amigável antes do encaminhamento para cobrança extrajudicial, o que poderá resultar na inclusão do seu nome em cadastros de inadimplentes (SPC/Serasa) e demais consequências previstas em contrato.
-
-Enquanto o débito não for regularizado, a matrícula nos semestres seguintes permanecerá bloqueada.
+Esta é a última oportunidade de resolução amigável antes do encaminhamento para cobrança extrajudicial e da inclusão do seu nome em cadastros de inadimplentes (SPC/Serasa).
 
 Regularize imediatamente: {{4}}
 Negociação: {{5}}
@@ -1013,7 +964,7 @@ Equipe Financeira — {{2}}</div>
 
 Débito com a {{2}} | 📅 Venceu em: {{3}}
 
-O débito está em processo de cobrança extrajudicial. Sem regularização, você não avança para nenhum semestre futuro e seu nome será negativado no SPC/Serasa.
+O débito está em processo de cobrança extrajudicial e seu nome será negativado no SPC/Serasa.
 
 📞 {{5}} | 🔗 {{4}}</div>
           <div class="msg-footer">&#10003; {{1}} nome &middot; {{2}} empresa &middot; {{3}} vencimento &middot; {{4}} link &middot; {{5}} telefone</div>
@@ -1030,8 +981,7 @@ O débito está em processo de cobrança extrajudicial. Sem regularização, voc
 Por meio deste comunicado, notificamos formalmente que o débito junto à {{2}}, com vencimento em {{3}}, foi encaminhado para o processo de cobrança extrajudicial.
 
 As seguintes medidas já estão em andamento ou serão aplicadas em breve:
-• Bloqueio de matrícula para todos os semestres futuros enquanto o débito não for regularizado;
-• Restrição de acesso a documentos (histórico, declarações, diplomas);
+• Restrição de acesso a documentos acadêmicos (histórico, declarações, diplomas);
 • Inclusão em serviços de proteção ao crédito (SPC/Serasa);
 • Encaminhamento para escritório de cobrança.
 
@@ -1055,7 +1005,6 @@ Equipe Financeira — {{2}}</div>
 
 Seu nome está em processo de negativação no SPC/Serasa. Regularize agora para evitar:
 ❌ Restrição de crédito
-❌ Bloqueio de matrícula para semestres futuros
 ❌ Restrição total de documentos acadêmicos
 
 📞 {{5}} | 🔗 {{4}}</div>
@@ -1072,7 +1021,7 @@ Seu nome está em processo de negativação no SPC/Serasa. Regularize agora para
 
 📅 Venceu em: {{3}}
 
-Seu caso já está com o escritório de cobrança. Sem regularização, a matrícula em semestres futuros permanece bloqueada.
+Seu caso já está com o escritório de cobrança.
 
 📞 Contato urgente: {{5}}
 🔗 {{4}}</div>
@@ -1091,7 +1040,7 @@ Decorridos 150 dias do vencimento ({{3}}), comunicamos que o débito junto à {{
 
 As medidas em andamento incluem:
 • Negativação junto ao SPC/Serasa;
-• Bloqueio de matrícula para todos os semestres futuros;
+
 • Restrição total de serviços e documentos acadêmicos.
 
 Mesmo nesta fase, é possível contato direto para negociação:
@@ -1112,7 +1061,7 @@ Equipe Financeira — {{2}}</div>
 
 📅 Venceu em: {{3}}
 
-Esta é a última tentativa de contato antes da ação judicial. Após este prazo, honorários advocatícios serão adicionados ao débito — e a matrícula em semestres futuros permanece bloqueada até integral quitação.
+Esta é a última tentativa de contato antes da ação judicial. Após este prazo, honorários advocatícios serão adicionados ao débito.
 
 🔗 {{4}}
 📞 Negocie agora: {{5}}</div>
@@ -1133,8 +1082,6 @@ Esta é a última notificação antes do encaminhamento para cobrança judicial.
 • Honorários advocatícios;
 • Custas processuais;
 • Possível protesto em cartório.
-
-Enquanto o débito não for regularizado, a matrícula nos semestres seguintes permanecerá bloqueada.
 
 Entre em contato imediatamente:
 📞 {{5}} | 🔗 {{4}}
@@ -1173,7 +1120,6 @@ Estou entrando em contato referente à sua parcela mais antiga em aberto:
 Esta parcela encontra-se há mais de 180 dias sem pagamento e foi encaminhada para processo de cobrança judicial. Honorários advocatícios e custas processuais já estão sendo adicionados ao valor original do débito.
 
 Consequências em andamento:
-❌ Matrícula bloqueada para todos os semestres futuros
 ❌ Nome negativado no SPC/Serasa
 ❌ Encargos judiciais crescendo diariamente
 
@@ -1195,8 +1141,6 @@ Ainda é possível encerrar este processo de forma amigável antes do protocolam
 Por meio desta notificação extrajudicial, comunicamos que o débito junto à {{2}}, com vencimento em {{3}}, foi encaminhado ao setor jurídico da instituição.
 
 Caso não haja manifestação no prazo de 5 (cinco) dias úteis, serão adotadas as medidas judiciais cabíveis para recuperação do crédito, com todos os encargos legais.
-
-O bloqueio de matrícula para semestres futuros permanecerá vigente até a integral quitação do débito.
 
 Para evitar o agravamento, entre em contato:
 📞 {{5}} | 🔗 {{4}}
@@ -1225,7 +1169,6 @@ Situação atual:
 ⚠️ Ação judicial protocolada
 ⚠️ Protesto em cartório previsto para os próximos dias
 ⚠️ Honorários e custas já incorporados ao débito
-⚠️ Matrícula bloqueada para todos os semestres futuros
 ⚠️ Nome negativado no SPC/Serasa
 
 A regularização neste momento ainda pode reduzir os encargos totais e encerrar o processo de forma amigável.
@@ -1250,8 +1193,6 @@ Este é o último comunicado antes da conclusão do processo. As consequências 
 • Honorários advocatícios e custas processuais adicionados ao débito;
 • Possível protesto em cartório;
 • Restrições de crédito em todos os órgãos de proteção;
-• Bloqueio de matrícula para semestres futuros até integral quitação.
-
 A regularização neste momento ainda poderá reduzir os encargos totais:
 📞 {{5}} | 🔗 {{4}}
 
@@ -1298,9 +1239,7 @@ Qualquer tratativa de regularização deve ser feita diretamente com nosso Depar
 
 O processo judicial referente ao débito junto à {{2}}, com vencimento em {{3}}, está em curso.
 
-A continuidade do processo implicará em protesto em cartório e acréscimo de todos os encargos processuais ao valor do débito. A matrícula nos semestres futuros permanecerá bloqueada até a integral quitação.
-
-Qualquer proposta de regularização deve ser tratada diretamente com o Departamento Jurídico:
+A continuidade do processo implicará em protesto em cartório e acréscimo de todos os encargos processuais ao valor do débito. Qualquer proposta de regularização deve ser tratada diretamente com o Departamento Jurídico:
 📞 {{5}} | 🔗 {{4}}
 
 Atenciosamente,
