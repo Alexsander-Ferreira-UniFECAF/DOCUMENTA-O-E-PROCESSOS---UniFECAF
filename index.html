@@ -1,39 +1,671 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UniFECAF - Processos e Procedimentos Cobrança</title>
-    <link rel="icon" type="image/png" href="favicon.png">
-    <style>
-        body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; background-color: #f9f9f9; color: #333; }
-        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        h1 { color: #1a1a1a; border-bottom: 2px solid #eee; padding-bottom: 10px; }
-        p { font-size: 16px; color: #666; }
-        ul { list-style-type: none; padding: 0; }
-        li { margin: 15px 0; background: #f0f4f8; padding: 12px; border-radius: 6px; transition: 0.2s; }
-        li:hover { background: #e1ebf5; }
-        a { color: #0056b3; text-decoration: none; font-size: 18px; font-weight: bold; display: block; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UniFECAF — Processos e Procedimentos | Cobrança & Recebíveis</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&family=Open+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --azul: #002855;
+      --azul-mid: #003d7a;
+      --verde: #2EAD6A;
+      --verde-light: #e8f7ef;
+      --verde-dark: #1d8a52;
+      --cinza-bg: #f4f6f9;
+      --cinza-card: #ffffff;
+      --cinza-borda: #e2e8f0;
+      --cinza-texto: #64748b;
+      --cinza-texto-leve: #94a3b8;
+      --texto: #1e293b;
+      --sombra: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+      --sombra-hover: 0 4px 12px rgba(0,0,0,0.10);
+    }
+
+    html { font-size: 16px; }
+
+    body {
+      font-family: 'Open Sans', Arial, sans-serif;
+      background: var(--cinza-bg);
+      color: var(--texto);
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--azul);
+      border-bottom: 3px solid var(--verde);
+      padding: 0 2rem;
+    }
+    .header-inner {
+      max-width: 1000px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.25rem 0;
+    }
+    .logo-mark {
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .header-titles h1 {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 19px;
+      font-weight: 600;
+      color: #ffffff;
+      letter-spacing: 0.02em;
+    }
+    .header-titles p {
+      font-size: 14px;
+      color: rgba(255,255,255,0.55);
+      margin-top: 2px;
+      font-weight: 400;
+    }
+    .header-pill {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(46,173,106,0.15);
+      border: 1px solid rgba(46,173,106,0.35);
+      color: #5dd99a;
+      font-size: 13px;
+      font-weight: 500;
+      font-family: 'Montserrat', sans-serif;
+      padding: 6px 14px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+    .header-pill::before {
+      content: '';
+      width: 7px;
+      height: 7px;
+      background: var(--verde);
+      border-radius: 50%;
+    }
+
+    /* ── HERO BAND ── */
+    .hero {
+      background: var(--azul);
+      padding: 1.5rem 2rem 2rem;
+    }
+    .hero-inner {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .search-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 8px;
+      padding: 11px 16px;
+      max-width: 500px;
+      margin: 0 auto;
+      cursor: text;
+    }
+    .search-wrap svg { width: 16px; height: 16px; stroke: rgba(255,255,255,0.35); flex-shrink: 0; }
+    .search-wrap span {
+      font-size: 15px;
+      color: rgba(255,255,255,0.3);
+    }
+
+    /* ── MAIN ── */
+    main {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* ── SECTION LABEL ── */
+    .section-label {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 11.5px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--cinza-texto-leve);
+      margin-bottom: 1rem;
+    }
+
+    /* ── CARD GRID ── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 14px;
+      margin-bottom: 2.5rem;
+    }
+
+    .doc-card {
+      background: var(--cinza-card);
+      border: 1px solid var(--cinza-borda);
+      border-radius: 12px;
+      padding: 1.25rem 1.3rem;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      transition: border-color 0.15s, box-shadow 0.15s, transform 0.12s;
+      box-shadow: var(--sombra);
+    }
+    .doc-card:hover {
+      border-color: var(--verde);
+      box-shadow: var(--sombra-hover);
+      transform: translateY(-2px);
+    }
+    .doc-card:focus-visible {
+      outline: 3px solid var(--verde);
+      outline-offset: 2px;
+    }
+
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .card-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .card-icon svg { width: 20px; height: 20px; }
+
+    .ci-blue   { background: #dbeafe; }
+    .ci-blue svg { stroke: #1d4ed8; }
+    .ci-green  { background: #dcfce7; }
+    .ci-green svg { stroke: #15803d; }
+    .ci-amber  { background: #fef3c7; }
+    .ci-amber svg { stroke: #b45309; }
+    .ci-teal   { background: #ccfbf1; }
+    .ci-teal svg { stroke: #0f766e; }
+    .ci-purple { background: #ede9fe; }
+    .ci-purple svg { stroke: #6d28d9; }
+    .ci-coral  { background: #ffe4e6; }
+    .ci-coral svg { stroke: #be123c; }
+    .ci-navy   { background: #dbeafe; }
+    .ci-navy svg { stroke: #1e3a5f; }
+
+    .card-tag {
+      font-size: 11px;
+      font-weight: 600;
+      font-family: 'Montserrat', sans-serif;
+      padding: 4px 10px;
+      border-radius: 20px;
+      letter-spacing: 0.03em;
+    }
+    .tag-processo  { background: #dcfce7; color: #15803d; }
+    .tag-politica  { background: #dbeafe; color: #1d4ed8; }
+    .tag-analise   { background: #fef3c7; color: #b45309; }
+    .tag-programa  { background: #ccfbf1; color: #0f766e; }
+    .tag-script    { background: #ede9fe; color: #6d28d9; }
+
+    .card-title {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--texto);
+      line-height: 1.35;
+      margin-bottom: 6px;
+    }
+    .card-desc {
+      font-size: 13px;
+      color: var(--cinza-texto);
+      line-height: 1.6;
+      flex: 1;
+    }
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 14px;
+      padding-top: 11px;
+      border-top: 1px solid var(--cinza-borda);
+    }
+    .card-date {
+      font-size: 12px;
+      color: var(--cinza-texto-leve);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .card-date svg { width: 13px; height: 13px; stroke: var(--cinza-texto-leve); }
+    .card-cta {
+      font-size: 13px;
+      font-weight: 600;
+      font-family: 'Montserrat', sans-serif;
+      color: var(--verde-dark);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .card-cta svg { width: 14px; height: 14px; stroke: var(--verde-dark); }
+
+    /* ── DIVIDER ── */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--cinza-borda);
+      margin: 0.25rem 0 1.75rem;
+    }
+
+    /* ── SCRIPTS PANEL ── */
+    .scripts-panel {
+      background: var(--cinza-card);
+      border: 1px solid var(--cinza-borda);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: var(--sombra);
+      margin-bottom: 2.5rem;
+    }
+    .scripts-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--cinza-borda);
+      background: #fafbfc;
+    }
+    .scripts-header-icon {
+      width: 34px;
+      height: 34px;
+      background: #ede9fe;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .scripts-header-icon svg { width: 18px; height: 18px; stroke: #6d28d9; }
+    .scripts-header-text {
+      flex: 1;
+    }
+    .scripts-header-text strong {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--texto);
+      display: block;
+    }
+    .scripts-header-text span {
+      font-size: 11.5px;
+      color: var(--cinza-texto);
+    }
+
+    .script-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 1.25rem;
+      text-decoration: none;
+      color: inherit;
+      border-bottom: 1px solid var(--cinza-borda);
+      transition: background 0.12s;
+    }
+    .script-row:last-child { border-bottom: none; }
+    .script-row:hover { background: #f8faff; }
+    .script-row:focus-visible { outline: 3px solid var(--verde); outline-offset: -3px; }
+
+    .script-file-icon {
+      width: 32px;
+      height: 32px;
+      background: #f1f0fe;
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .script-file-icon svg { width: 16px; height: 16px; stroke: #7c3aed; }
+
+    .script-info { flex: 1; }
+    .script-name {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--texto);
+    }
+    .script-desc {
+      font-size: 12.5px;
+      color: var(--cinza-texto);
+      margin-top: 2px;
+    }
+    .script-badge {
+      font-size: 11px;
+      font-weight: 600;
+      font-family: 'Montserrat', sans-serif;
+      background: #ede9fe;
+      color: #6d28d9;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+    .script-arrow svg { width: 14px; height: 14px; stroke: var(--cinza-texto-leve); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--azul);
+      border-top: 3px solid var(--verde);
+      padding: 1.1rem 2rem;
+    }
+    .footer-inner {
+      max-width: 1000px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .footer-inner span {
+      font-size: 14px;
+      color: rgba(255,255,255,0.4);
+    }
+    .footer-inner .f-green { color: var(--verde); font-weight: 500; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 640px) {
+      main { padding: 1.25rem; }
+      .card-grid { grid-template-columns: 1fr; }
+      .header-pill { display: none; }
+      .feroz-flutuante { width: 100px; bottom: 60px; }
+    }
+
+    /* ── PADRÃO FAIXA ── */
+    .padrao-faixa {
+      width: 100%;
+      overflow: hidden;
+      line-height: 0;
+      height: 48px;
+      background: #002855;
+    }
+    .padrao-faixa img {
+      width: 100%;
+      height: 48px;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+    }
+
+    /* ── FEROZ FLUTUANTE ── */
+    .feroz-flutuante {
+      position: fixed;
+      bottom: 0;
+      right: 24px;
+      width: 140px;
+      height: auto;
+      z-index: 100;
+      pointer-events: none;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.25));
+    }
+  </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>UniFECAF - Processos e Procedimentos Cobrança</h1>
-        <p>Bem-vindo à base de conhecimento institucional da UniFECAF! Aqui centralizamos a documentação de todos os nossos processos e procedimentos. Uma fonte de informação prática e atualizada para facilitar o acesso e garantir a padronização das rotinas.</p>
-        
-        <h3>Selecione o documento que deseja acessar:</h3>
-        <ul>
-            <li><a href="Régua de Comunicação — UniFECAF.html" target="_blank">▶ Régua de Comunicação — UniFECAF</a></li>
-            <li><a href="Planos de Pagamento e Trancamento de Matrícula — UniFECAF.html" target="_blank">▶ Planos de Pagamento e Trancamento de Matrícula — UniFECAF</a></li>
-            <li><a href="Programa Pausa Financeira - UniFECAF.html" target="_blank">▶ Programa Pausa Financeira - UniFECAF</a></li>
-            <li><a href="volte-unifecaf.html" target="_blank">▶ Projeto Volte - UniFECAF</a></li>
-            <li><a href="polo_ativo_inadimplencia.html" target="_blank">▶ Polo Ativo - Inadimplência</a></li>
-            <li><a href="analise_renegociacoes_2026.html" target="_blank">▶ Análise de Renegociações - 2026</a></li>
-            <li><a href="SCRIPTS DE AUTOMAÇÃO (PYTHON)/01 - ANALISE DE DÉBITOS INDEVIDOS/manual_cruzamento_trancamentos_v8.html" target="_blank">▶ Manual e Script - Auditoria de Trancamentos</a></li>
-            <li><a href="Politica_Institucional_Cobranca_UniFECAF.html" target="_blank">▶ Política Institucional de Cobrança - UniFECAF</a></li>
-        </ul>
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <div class="logo-mark">
+      <img src="UniFECAf_-_Branco.png" alt="UniFECAF" style="height: 32px; width: auto; display: block; mix-blend-mode: screen;">
     </div>
+    <div class="header-titles">
+      <h1>Processos e Procedimentos</h1>
+      <p>Cobrança &amp; Recebíveis · Base de conhecimento institucional</p>
+    </div>
+    <div class="header-pill">Canal ativo</div>
+  </div>
+</header>
+
+<!-- HERO / SEARCH -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="search-wrap" role="search" aria-label="Buscar documentos">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <span>Buscar documento, processo ou procedimento…</span>
+    </div>
+  </div>
+</div>
+
+<!-- FAIXA PADRÃO -->
+<div class="padrao-faixa">
+  <img src="Padrão_UniFECAFColorido_4x.png" alt="" aria-hidden="true">
+</div>
+
+<!-- FEROZ FLUTUANTE -->
+<img src="Feroz_apontando_para_cima.png" alt="Feroz — mascote UniFECAF" class="feroz-flutuante">
+
+<!-- MAIN -->
+<main>
+
+  <p class="section-label">Documentos operacionais</p>
+
+  <div class="card-grid" role="list">
+
+    <!-- Régua de Comunicação -->
+    <a href="Régua de Comunicação — UniFECAF.html" target="_blank" class="doc-card" role="listitem">
+      <div class="card-top">
+        <div class="card-icon ci-blue">
+          <!-- folha escrita: processo -->
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="8" y1="13" x2="16" y2="13"/>
+            <line x1="8" y1="17" x2="16" y2="17"/>
+            <line x1="8" y1="9" x2="10" y2="9"/>
+          </svg>
+        </div>
+        <span class="card-tag tag-processo">Processo</span>
+      </div>
+      <div class="card-title">Régua de Comunicação</div>
+      <div class="card-desc">Fluxo multicanal de cobrança por faixa de atraso — WhatsApp e e-mail, até 220 dias.</div>
+      <div class="card-footer">
+        <span class="card-date">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          há 1 semana
+        </span>
+        <span class="card-cta">Acessar
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </span>
+      </div>
+    </a>
+
+    <!-- Planos de Pagamento -->
+    <a href="Planos de Pagamento e Trancamento de Matrícula — UniFECAF.html" target="_blank" class="doc-card" role="listitem">
+      <div class="card-top">
+        <div class="card-icon ci-green">
+          <!-- folha escrita: processo -->
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="8" y1="13" x2="16" y2="13"/>
+            <line x1="8" y1="17" x2="16" y2="17"/>
+            <line x1="8" y1="9" x2="10" y2="9"/>
+          </svg>
+        </div>
+        <span class="card-tag tag-processo">Processo</span>
+      </div>
+      <div class="card-title">Planos de Pagamento e Trancamento</div>
+      <div class="card-desc">Regras e condições para parcelamento de débitos e suspensão de matrícula.</div>
+      <div class="card-footer">
+        <span class="card-date">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          há 2 semanas
+        </span>
+        <span class="card-cta">Acessar
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </span>
+      </div>
+    </a>
+
+    <!-- Pausa Financeira -->
+    <a href="Programa Pausa Financeira - UniFECAF.html" target="_blank" class="doc-card" role="listitem">
+      <div class="card-top">
+        <div class="card-icon ci-teal">
+          <!-- estrela: programa -->
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
+        </div>
+        <span class="card-tag tag-programa">Programa</span>
+      </div>
+      <div class="card-title">Pausa Financeira</div>
+      <div class="card-desc">Condições e elegibilidade do programa de pausa temporária no pagamento.</div>
+      <div class="card-footer">
+        <span class="card-date">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          há 2 semanas
+        </span>
+        <span class="card-cta">Acessar
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </span>
+      </div>
+    </a>
+
+    <!-- Projeto Volte -->
+    <a href="volte-unifecaf.html" target="_blank" class="doc-card" role="listitem">
+      <div class="card-top">
+        <div class="card-icon ci-amber">
+          <!-- estrela: programa -->
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
+        </div>
+        <span class="card-tag tag-programa">Programa</span>
+      </div>
+      <div class="card-title">Projeto Volte</div>
+      <div class="card-desc">Estratégia de reativação e recuperação de ex-alunos inadimplentes.</div>
+      <div class="card-footer">
+        <span class="card-date">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          há 2 semanas
+        </span>
+        <span class="card-cta">Acessar
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </span>
+      </div>
+    </a>
+
+    <!-- Polo Ativo -->
+    <a href="polo_ativo_inadimplencia.html" target="_blank" class="doc-card" role="listitem">
+      <div class="card-top">
+        <div class="card-icon ci-coral">
+          <!-- folha escrita: processo -->
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="8" y1="13" x2="16" y2="13"/>
+            <line x1="8" y1="17" x2="16" y2="17"/>
+            <line x1="8" y1="9" x2="10" y2="9"/>
+          </svg>
+        </div>
+        <span class="card-tag tag-processo">Processo</span>
+      </div>
+      <div class="card-title">Polo Ativo — Inadimplência</div>
+      <div class="card-desc">Procedimentos e fluxo de cobrança ativa por polo e unidade.</div>
+      <div class="card-footer">
+        <span class="card-date">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          há 1 semana
+        </span>
+        <span class="card-cta">Acessar
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </span>
+      </div>
+    </a>
+
+    <!-- Análise Renegociações -->
+    <a href="analise_renegociacoes_2026.html" target="_blank" class="doc-card" role="listitem">
+      <div class="card-top">
+        <div class="card-icon ci-navy">
+          <!-- gráfico tendência: análise -->
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+            <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/>
+            <polyline points="16 7 22 7 22 13"/>
+          </svg>
+        </div>
+        <span class="card-tag tag-analise">Análise</span>
+      </div>
+      <div class="card-title">Análise de Renegociações 2026</div>
+      <div class="card-desc">Resultados, tendências e indicadores das renegociações — base 2026.</div>
+      <div class="card-footer">
+        <span class="card-date">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          há 1 semana
+        </span>
+        <span class="card-cta">Acessar
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </span>
+      </div>
+    </a>
+
+    <!-- Política Institucional -->
+    <a href="Politica_Institucional_Cobranca_UniFECAF.html" target="_blank" class="doc-card" role="listitem">
+      <div class="card-top">
+        <div class="card-icon ci-blue">
+          <!-- escudo: política institucional -->
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </div>
+        <span class="card-tag tag-politica">Política</span>
+      </div>
+      <div class="card-title">Política Institucional de Cobrança</div>
+      <div class="card-desc">Diretrizes e normas oficiais do setor de Cobrança &amp; Recebíveis UniFECAF.</div>
+      <div class="card-footer">
+        <span class="card-date">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          recente
+        </span>
+        <span class="card-cta">Acessar
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </span>
+      </div>
+    </a>
+
+  </div>
+
+  <!-- SCRIPTS SECTION -->
+  <hr class="divider">
+  <p class="section-label">Automação e scripts</p>
+
+  <div class="scripts-panel">
+    <a href="SCRIPTS DE AUTOMAÇÃO (PYTHON)/01 - ANALISE DE DÉBITOS INDEVIDOS/manual_cruzamento_trancamentos_v8.html" target="_blank" class="script-row">
+      <div class="script-file-icon">
+        <!-- livro: manual técnico -->
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>
+        </svg>
+      </div>
+      <div class="script-info">
+        <div class="script-name">Manual técnico — cruzamento_trancamentos</div>
+        <div class="script-desc">Documentação completa da lógica: corte dia 7, classificação ANT / PST, DEVIDA / INDEVIDA</div>
+      </div>
+      <span class="script-badge">v8 · HTML</span>
+      <div class="script-arrow">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </div>
+    </a>
+  </div>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <span>UniFECAF &nbsp;·&nbsp; Cobrança &amp; Recebíveis</span>
+    <span class="f-green">Base de conhecimento institucional</span>
+  </div>
+</footer>
 
 </body>
 </html>
