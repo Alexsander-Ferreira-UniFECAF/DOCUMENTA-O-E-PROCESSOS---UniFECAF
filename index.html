@@ -129,9 +129,15 @@
       backdrop-filter: blur(4px);
     }
     .search-wrap svg { width: 18px; height: 18px; stroke: rgba(255,255,255,0.5); flex-shrink: 0; }
-    .search-wrap span {
-      font-size: 16px;
-      color: rgba(255,255,255,0.4);
+    #busca::placeholder { color: rgba(255,255,255,0.4); }
+
+    /* ── sem resultados ── */
+    .sem-resultado {
+      text-align: center;
+      padding: 2rem;
+      color: var(--cinza-texto);
+      font-size: 15px;
+      display: none;
     }
 
     /* ── MAIN ── */
@@ -171,6 +177,7 @@
       flex-direction: column;
       transition: border-color 0.15s, box-shadow 0.15s, transform 0.12s;
       box-shadow: var(--sombra);
+      max-width: 100%;
     }
     .doc-card:hover {
       border-color: var(--verde);
@@ -281,9 +288,13 @@
       background: var(--cinza-card);
       border: 1px solid var(--cinza-borda);
       border-radius: 12px;
-      overflow: hidden;
       box-shadow: var(--sombra);
       margin-bottom: 2.5rem;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .scripts-panel:hover {
+      border-color: var(--verde);
+      box-shadow: var(--sombra-hover);
     }
     .scripts-header {
       display: flex;
@@ -450,7 +461,7 @@
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
         <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
       </svg>
-      <span>Buscar documento, processo ou procedimento…</span>
+      <input type="text" id="busca" placeholder="Buscar documento, processo ou procedimento…" autocomplete="off" style="background:transparent; border:none; outline:none; font-size:16px; color:rgba(255,255,255,0.85); width:100%; font-family:'Open Sans',Arial,sans-serif;">
     </div>
   </div>
 </div>
@@ -648,6 +659,8 @@
 
   </div>
 
+  <p class="sem-resultado" id="sem-resultado">Nenhum documento encontrado para "<span id="termo-busca"></span>".</p>
+
   <!-- SCRIPTS SECTION -->
   <hr class="divider">
   <p class="section-label">Automação e scripts</p>
@@ -684,6 +697,43 @@
 
 </body>
 <script>
+  // Busca em tempo real
+  const input = document.getElementById('busca');
+  const cards = document.querySelectorAll('.doc-card');
+  const scriptRows = document.querySelectorAll('.script-row');
+  const semResultado = document.getElementById('sem-resultado');
+  const termoBusca = document.getElementById('termo-busca');
+
+  input.addEventListener('input', function() {
+    const termo = this.value.trim().toLowerCase();
+    let visiveis = 0;
+
+    cards.forEach(function(card) {
+      const titulo = card.querySelector('.card-title').textContent.toLowerCase();
+      const desc = card.querySelector('.card-desc').textContent.toLowerCase();
+      const tag = card.querySelector('.card-tag').textContent.toLowerCase();
+      const match = !termo || titulo.includes(termo) || desc.includes(termo) || tag.includes(termo);
+      card.style.display = match ? '' : 'none';
+      if (match) visiveis++;
+    });
+
+    scriptRows.forEach(function(row) {
+      const nome = row.querySelector('.script-name').textContent.toLowerCase();
+      const desc = row.querySelector('.script-desc').textContent.toLowerCase();
+      const match = !termo || nome.includes(termo) || desc.includes(termo);
+      row.style.display = match ? '' : 'none';
+      if (match) visiveis++;
+    });
+
+    if (termo.length > 0 && visiveis === 0) {
+      semResultado.style.display = 'block';
+      termoBusca.textContent = this.value.trim();
+    } else {
+      semResultado.style.display = 'none';
+    }
+  });
+
+  // Feroz mobile
   const feroz = document.querySelector('.feroz-flutuante');
   window.addEventListener('scroll', function() {
     const scrolled = window.scrollY + window.innerHeight;
