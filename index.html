@@ -393,20 +393,31 @@
       main { padding: 1.25rem; }
       .card-grid { grid-template-columns: 1fr; }
       .header-pill { display: none; }
-      .feroz-flutuante { width: 110px; }
+      .header-inner { gap: 0.75rem; }
+      .logo-mark img { height: 36px !important; }
+      .header-titles h1 { font-size: 17px; }
+      .header-titles p { font-size: 12px; }
+      .feroz-flutuante { width: 90px; }
     }
 
     /* ── FEROZ FLUTUANTE ── */
     .feroz-flutuante {
       position: fixed;
       bottom: 0;
-      right: 24px;
+      right: 16px;
       width: 150px;
       height: auto;
       z-index: 100;
       pointer-events: none;
       filter: drop-shadow(0 4px 16px rgba(0,0,0,0.3));
       display: block;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    .feroz-flutuante.visivel {
+      opacity: 1;
+      transform: translateY(0);
     }
   </style>
 </head>
@@ -668,4 +679,16 @@
 </footer>
 
 </body>
+<script>
+  const feroz = document.querySelector('.feroz-flutuante');
+  window.addEventListener('scroll', function() {
+    const scrolled = window.scrollY + window.innerHeight;
+    const total = document.body.scrollHeight;
+    if (scrolled >= total - 300) {
+      feroz.classList.add('visivel');
+    } else {
+      feroz.classList.remove('visivel');
+    }
+  });
+</script>
 </html>
