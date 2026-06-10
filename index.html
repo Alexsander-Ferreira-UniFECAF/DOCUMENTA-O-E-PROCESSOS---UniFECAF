@@ -89,7 +89,7 @@
       border-radius: 50%;
     }
 
-    /* ── HERO BAND — padrão como fundo, busca sobreposta ── */
+    /* ── HERO BAND ── */
     .hero {
       position: relative;
       overflow: hidden;
@@ -220,6 +220,8 @@
     .ci-coral svg { stroke: #be123c; }
     .ci-navy   { background: #dbeafe; }
     .ci-navy svg { stroke: #1e3a5f; }
+    .ci-indigo { background: #e0e7ff; }
+    .ci-indigo svg { stroke: #4338ca; }
 
     .card-tag {
       font-size: 12px;
@@ -229,11 +231,12 @@
       border-radius: 20px;
       letter-spacing: 0.03em;
     }
-    .tag-processo  { background: #dcfce7; color: #15803d; }
-    .tag-politica  { background: #dbeafe; color: #1d4ed8; }
-    .tag-analise   { background: #fef3c7; color: #b45309; }
-    .tag-programa  { background: #ccfbf1; color: #0f766e; }
-    .tag-script    { background: #ede9fe; color: #6d28d9; }
+    .tag-processo    { background: #dcfce7; color: #15803d; }
+    .tag-politica    { background: #dbeafe; color: #1d4ed8; }
+    .tag-analise     { background: #fef3c7; color: #b45309; }
+    .tag-programa    { background: #ccfbf1; color: #0f766e; }
+    .tag-script      { background: #ede9fe; color: #6d28d9; }
+    .tag-ferramenta  { background: #e0e7ff; color: #4338ca; }
 
     .card-title {
       font-family: 'Montserrat', sans-serif;
@@ -415,7 +418,6 @@
       transition: opacity 0.4s ease, transform 0.4s ease;
     }
 
-    /* mobile: começa invisível, aparece via JS */
     @media (max-width: 640px) {
       main { padding: 1.25rem; }
       .card-grid { grid-template-columns: 1fr; }
@@ -452,7 +454,7 @@
   </div>
 </header>
 
-<!-- HERO / SEARCH com padrão como fundo -->
+<!-- HERO / SEARCH -->
 <div class="hero">
   <img src="Padrão_UniFECAFColorido@4x.png" class="hero-bg" alt="" aria-hidden="true">
   <div class="hero-overlay"></div>
@@ -480,7 +482,6 @@
     <a href="Régua de Comunicação — UniFECAF.html" target="_blank" class="doc-card" role="listitem">
       <div class="card-top">
         <div class="card-icon ci-blue">
-          <!-- folha escrita: processo -->
           <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
             <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
             <polyline points="14 2 14 8 20 8"/>
@@ -508,7 +509,6 @@
     <a href="Planos de Pagamento e Trancamento de Matrícula — UniFECAF.html" target="_blank" class="doc-card" role="listitem">
       <div class="card-top">
         <div class="card-icon ci-green">
-          <!-- folha escrita: processo -->
           <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
             <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
             <polyline points="14 2 14 8 20 8"/>
@@ -536,7 +536,6 @@
     <a href="Programa Pausa Financeira - UniFECAF.html" target="_blank" class="doc-card" role="listitem">
       <div class="card-top">
         <div class="card-icon ci-teal">
-          <!-- estrela: programa -->
           <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
             <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
           </svg>
@@ -560,7 +559,6 @@
     <a href="volte-unifecaf.html" target="_blank" class="doc-card" role="listitem">
       <div class="card-top">
         <div class="card-icon ci-amber">
-          <!-- estrela: programa -->
           <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
             <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
           </svg>
@@ -584,7 +582,6 @@
     <a href="polo_ativo_inadimplencia.html" target="_blank" class="doc-card" role="listitem">
       <div class="card-top">
         <div class="card-icon ci-coral">
-          <!-- folha escrita: processo -->
           <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
             <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
             <polyline points="14 2 14 8 20 8"/>
@@ -612,7 +609,6 @@
     <a href="analise_renegociacoes_2026.html" target="_blank" class="doc-card" role="listitem">
       <div class="card-top">
         <div class="card-icon ci-navy">
-          <!-- gráfico tendência: análise -->
           <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
             <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/>
             <polyline points="16 7 22 7 22 13"/>
@@ -637,7 +633,6 @@
     <a href="Politica_Institucional_Cobranca_UniFECAF.html" target="_blank" class="doc-card" role="listitem">
       <div class="card-top">
         <div class="card-icon ci-blue">
-          <!-- escudo: política institucional -->
           <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
           </svg>
@@ -646,6 +641,32 @@
       </div>
       <div class="card-title">Política Institucional de Cobrança</div>
       <div class="card-desc">Diretrizes e normas oficiais do setor de Cobrança &amp; Recebíveis UniFECAF.</div>
+      <div class="card-footer">
+        <span class="card-date">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          recente
+        </span>
+        <span class="card-cta">Acessar
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </span>
+      </div>
+    </a>
+
+    <!-- ✦ NOVO — Gerador de Assinaturas -->
+    <a href="gerador_de_assinaturas_pronto_para_github_pages.html" target="_blank" class="doc-card" role="listitem">
+      <div class="card-top">
+        <div class="card-icon ci-indigo">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="3" width="20" height="14" rx="2"/>
+            <path d="M8 21h8M12 17v4"/>
+            <path d="M7 10.5c0-1.38 1.12-2.5 2.5-2.5S12 9.12 12 10.5 10.88 13 9.5 13 7 11.88 7 10.5z"/>
+            <path d="M12 13h5M12 10h3"/>
+          </svg>
+        </div>
+        <span class="card-tag tag-ferramenta">Ferramenta</span>
+      </div>
+      <div class="card-title">Gerador de Assinaturas</div>
+      <div class="card-desc">Criação de assinaturas de e-mail padronizadas no layout UniFECAF para toda a equipe.</div>
       <div class="card-footer">
         <span class="card-date">
           <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -668,7 +689,6 @@
   <div class="scripts-panel">
     <a href="SCRIPTS DE AUTOMAÇÃO (PYTHON)/01 - ANALISE DE DÉBITOS INDEVIDOS/manual_cruzamento_trancamentos_v8.html" target="_blank" class="script-row">
       <div class="script-file-icon">
-        <!-- livro: manual técnico -->
         <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
           <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/>
           <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>
