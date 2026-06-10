@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Assinaturas - UniFECAF</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;850;900&family=Lato:wght@400;500;700;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        poppins: ['Poppins', 'sans-serif'],
+                        lato: ['Lato', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- React e Babel para rodar JSX direto no navegador -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- html2canvas para exportação de imagem -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        /* Ajustes finos de rolagem */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useRef, useEffect } = React;
+
+        const BRAND_COLORS = {
+            navy: '#0d1e36',
+            teal: '#11caa0',
+            mint: '#00df89',
+            purple: '#7b2cbf',
+            blue: '#0077b6',
+            magenta: '#f72585',
+            yellow: '#ffbe0b',
+        };
+
+        const UniFecafLogo = ({ theme, height = 28 }) => {
+            const isDark = theme === 'dark';
+            const textColor = isDark ? '#ffffff' : '#005c99';
+            const bracketColor = isDark ? '#ffffff' : '#005c99';
+            const centerSquareColor = isDark ? '#ffffff' : '#00b25c';
+            
+            return (
+                <svg 
+                    width={height * 3.6} 
+                    height={height} 
+                    viewBox="0 0 260 70" 
+                    fill="none" 
+                    xmlns="http://www.w3.org/2000/svg"
+                    style={{ display: 'block' }}
+                >
+                    <path 
+                        d="M 12,52 L 12,20 L 20,12 L 52,12 L 52,21 L 24,21 L 21,24 L 21,52 Z" 
+                        fill={bracketColor} 
+                    />
+                    <path 
+                        d="M 60,20 L 60,52 L 52,60 L 20,60 L 20,52 L 48,52 L 51,49 L 51,20 Z" 
+                        fill={bracketColor} 
+                    />
+                    <rect 
+                        x="29" 
+                        y="29" 
+                        width="14" 
+                        height="14" 
+                        rx="2" 
+                        fill={centerSquareColor} 
+                    />
+                    <text 
+                        x="76" 
+                        y="48" 
+                        fontFamily="'Poppins', 'Inter', 'Segoe UI', sans-serif" 
+                        fontSize="34" 
+                        fontWeight="600" 
+                        fill={textColor} 
+                        letterSpacing="-1px"
+                    >
+                        Uni<tspan fontWeight="900" fill={textColor}>FECAF</tspan>
+                    </text>
+                </svg>
+            );
+        };
+
+        function App() {
+            const [name, setName] = useState('Alexsander Ferreira');
+            const [role, setRole] = useState('Control Desk');
+            const [email, setEmail] = useState('alexsander.silva@fecaf.com.br');
+            const [phone, setPhone] = useState('(11) 960682722');
+            const [linkedin, setLinkedin] = useState('linkedin.com/in/alexsander-ferreira-85461312a');
+            const [website, setWebsite] = useState('www.fecaf.com.br');
+            const [slogan, setSlogan] = useState('Seu sonho, nossa meta!');
+            
+            const [accentColor, setAccentColor] = useState(BRAND_COLORS.teal);
+            const [theme, setTheme] = useState('dark');
+            const [photoUrl, setPhotoUrl] = useState('');
+            const [photoZoom, setPhotoZoom] = useState(100);
+            const [photoX, setPhotoX] = useState(0);
+            const [photoY, setPhotoY] = useState(0);
+            const [showIcons, setShowIcons] = useState(true);
+            const [showSlogan, setShowSlogan] = useState(true);
+            
+            const [activeTab, setActiveTab] = useState('data');
+            const [copiedText, setCopiedText] = useState(false);
+            const [copiedHtml, setCopiedHtml] = useState(false);
+            const [isExporting, setIsExporting] = useState(false);
+            
+            const signatureRef = useRef(null);
+            const fileInputRef = useRef(null);
+
+            const handlePhotoUpload = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (uploadEvent) => {
+                        setPhotoUrl(uploadEvent.target.result);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+
+            const handleRemovePhoto = () => {
+                setPhotoUrl('');
+                if (fileInputRef.current) fileInputRef.current.value = '';
+            };
+
+            const downloadPNG = async () => {
+                setIsExporting(true);
+                try {
+                    await new Promise(r => setTimeout(r, 300));
+                    const element = signatureRef.current;
+                    const canvas = await window.html2canvas(element, {
+                        scale: 4,
+                        useCORS: true,
+                        backgroundColor: null,
+                        logging: false,
+                    });
+                    
+                    const link = document.createElement('a');
+                    link.download = `assinatura_unifecaf_${name.toLowerCase().replace(/\s+/g, '_')}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                } catch (error) {
+                    console.error('Erro ao gerar imagem:', error);
+                } finally {
+                    setIsExporting(false);
+                }
+            };
+
+            const copyRichText = async () => {
+                try {
+                    const element = signatureRef.current;
+                    const range = document.createRange();
+                    range.selectNode(element);
+                    window.getSelection().removeAllRanges();
+                    window.getSelection().addRange(range);
+                    
+                    document.execCommand('copy');
+                    window.getSelection().removeAllRanges();
+                    
+                    setCopiedText(true);
+                    setTimeout(() => setCopiedText(false), 2000);
+                } catch (err) {
+                    console.error('Erro ao copiar texto formatado:', err);
+                }
+            };
+
+            const copyHtmlCode = () => {
+                if (signatureRef.current) {
+                    const htmlContent = signatureRef.current.outerHTML;
+                    const tempTextArea = document.createElement('textarea');
+                    tempTextArea.value = htmlContent;
+                    document.body.appendChild(tempTextArea);
+                    tempTextArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(tempTextArea);
+                    
+                    setCopiedHtml(true);
+                    setTimeout(() => setCopiedHtml(false), 2000);
+                }
+            };
+
+            return (
+                <div className="min-h-screen flex flex-col justify-between">
+                    <header className="border-b border-slate-800 bg-slate-950/80 backdrop-blur px-6 py-4 sticky top-0 z-50">
+                        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-lg bg-teal-500 flex items-center justify-center shadow-lg shadow-teal-500/20 flex-shrink-0">
+                                    <svg viewBox="0 0 72 72" width="52" height="52" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12,56 L12,20 L20,12 L56,12 L56,20 L24,20 L20,24 L20,56 Z" fill="white"/>
+                                        <path d="M60,16 L60,52 L52,60 L16,60 L16,52 L48,52 L52,48 L52,16 Z" fill="white"/>
+                                        <rect x="28" y="28" width="16" height="16" rx="2" fill="white"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h1 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+                                        Gerador de Assinaturas <span className="text-teal-400 font-poppins">UniFECAF</span>
+                                    </h1>
+                                    <p className="text-xs text-slate-400">Modelo ultra-compacto otimizado para e-mails e dispositivos móveis</p>
+                                </div>
+                            </div>
+                            <div className="flex gap-2">
+                                <span className="px-3 py-1 text-xs bg-emerald-500/10 text-emerald-400 rounded-full font-medium border border-emerald-500/20 flex items-center gap-1.5">
+                                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                                    Layout Compacto Otimizado
+                                </span>
+                            </div>
+                        </div>
+                    </header>
+
+                    <main className="max-w-7xl mx-auto w-full p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 flex-grow">
+                        {/* COLUNA ESQUERDA: EDITOR */}
+                        <div className="lg:col-span-5 flex flex-col gap-6">
+                            <div className="bg-slate-950 border border-slate-800 rounded-2xl overflow-hidden shadow-xl flex flex-col h-full">
+                                <div className="flex border-b border-slate-800 bg-slate-900/50 p-1">
+                                    <button
+                                        onClick={() => setActiveTab('data')}
+                                        className={`flex-1 py-3 px-2 text-xs md:text-sm font-semibold rounded-xl transition duration-150 flex flex-col items-center gap-1 ${
+                                            activeTab === 'data' ? 'bg-slate-800 text-white shadow-inner' : 'text-slate-400 hover:text-white'
+                                        }`}
+                                    >
+                                        <i className="fa-solid fa-user-pen mb-1 text-base"></i>
+                                        Dados
+                                    </button>
+                                    <button
+                                        onClick={() => setActiveTab('photo')}
+                                        className={`flex-1 py-3 px-2 text-xs md:text-sm font-semibold rounded-xl transition duration-150 flex flex-col items-center gap-1 ${
+                                            activeTab === 'photo' ? 'bg-slate-800 text-white shadow-inner' : 'text-slate-400 hover:text-white'
+                                        }`}
+                                    >
+                                        <i className="fa-solid fa-image-portrait mb-1 text-base"></i>
+                                        Foto
+                                    </button>
+                                    <button
+                                        onClick={() => setActiveTab('style')}
+                                        className={`flex-1 py-3 px-2 text-xs md:text-sm font-semibold rounded-xl transition duration-150 flex flex-col items-center gap-1 ${
+                                            activeTab === 'style' ? 'bg-slate-800 text-white shadow-inner' : 'text-slate-400 hover:text-white'
+                                        }`}
+                                    >
+                                        <i className="fa-solid fa-palette mb-1 text-base"></i>
+                                        Design
+                                    </button>
+                                    <button
+                                        onClick={() => setActiveTab('canva')}
+                                        className={`flex-1 py-3 px-2 text-xs md:text-sm font-semibold rounded-xl transition duration-150 flex flex-col items-center gap-1 ${
+                                            activeTab === 'canva' ? 'bg-emerald-500/20 text-emerald-400 shadow-inner' : 'text-slate-400 hover:text-emerald-300'
+                                        }`}
+                                    >
+                                        <i className="fa-solid fa-book-open mb-1 text-base"></i>
+                                        Guia Canva
+                                    </button>
+                                </div>
+
+                                <div className="p-6 flex-grow overflow-y-auto" style={{ maxHeight: 'none' }}>
+                                    {activeTab === 'data' && (
+                                        <div className="space-y-4">
+                                            <div>
+                                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Nome Completo</label>
+                                                <input
+                                                    type="text"
+                                                    value={name}
+                                                    onChange={(e) => setName(e.target.value)}
+                                                    className="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Cargo / Departamento</label>
+                                                <input
+                                                    type="text"
+                                                    value={role}
+                                                    onChange={(e) => setRole(e.target.value)}
+                                                    className="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition"
+                                                />
+                                            </div>
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                <div>
+                                                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">E-mail Corporativo</label>
+                                                    <input
+                                                        type="email"
+                                                        value={email}
+                                                        onChange={(e) => setEmail(e.target.value)}
+                                                        className="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Telefone / WhatsApp</label>
+                                                    <input
+                                                        type="text"
+                                                        value={phone}
+                                                        onChange={(e) => setPhone(e.target.value)}
+                                                        className="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                <div>
+                                                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">LinkedIn</label>
+                                                    <input
+                                                        type="text"
+                                                        value={linkedin}
+                                                        onChange={(e) => setLinkedin(e.target.value)}
+                                                        className="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Website Principal</label>
+                                                    <input
+                                                        type="text"
+                                                        value={website}
+                                                        onChange={(e) => setWebsite(e.target.value)}
+                                                        className="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Slogan UniFECAF</label>
+                                                <input
+                                                    type="text"
+                                                    value={slogan}
+                                                    onChange={(e) => setSlogan(e.target.value)}
+                                                    className="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition"
+                                                />
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {activeTab === 'photo' && (
+                                        <div className="space-y-5">
+                                            <div className="flex flex-col items-center justify-center border-2 border-dashed border-slate-800 rounded-2xl p-6 bg-slate-900/20 hover:bg-slate-900/40 transition">
+                                                {photoUrl ? (
+                                                    <div className="relative w-28 h-28 rounded-2xl overflow-hidden mb-3 border-2 border-teal-500 shadow-lg">
+                                                        <img 
+                                                            src={photoUrl} 
+                                                            alt="Previsualização" 
+                                                            className="w-full h-full object-cover"
+                                                            style={{
+                                                                transform: `scale(${photoZoom / 100}) translate(${photoX}px, ${photoY}px)`,
+                                                                transition: 'transform 0.1s ease-out'
+                                                            }}
+                                                        />
+                                                        <button
+                                                            onClick={handleRemovePhoto}
+                                                            className="absolute top-1 right-1 bg-red-600 hover:bg-red-700 text-white rounded-full p-1 shadow transition"
+                                                        >
+                                                            <i className="fa-solid fa-trash-can text-xs"></i>
+                                                        </button>
+                                                    </div>
+                                                ) : (
+                                                    <div className="w-16 h-16 rounded-2xl bg-slate-800 flex items-center justify-center mb-3 text-slate-400">
+                                                        <i className="fa-solid fa-user-circle text-3xl"></i>
+                                                    </div>
+                                                )}
+                                                
+                                                <input
+                                                    type="file"
+                                                    ref={fileInputRef}
+                                                    onChange={handlePhotoUpload}
+                                                    accept="image/*"
+                                                    className="hidden"
+                                                />
+                                                <button
+                                                    onClick={() => fileInputRef.current.click()}
+                                                    className="px-4 py-2 bg-slate-800 hover:bg-slate-750 text-white rounded-xl text-sm font-semibold border border-slate-700 transition flex items-center gap-2"
+                                                >
+                                                    <i className="fa-solid fa-cloud-arrow-up text-teal-400"></i>
+                                                    {photoUrl ? 'Alterar Imagem' : 'Carregar Foto'}
+                                                </button>
+                                            </div>
+
+                                            {photoUrl && (
+                                                <div className="space-y-3 bg-slate-900/40 p-4 rounded-xl border border-slate-800/60">
+                                                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Ajuste de Posição</h4>
+                                                    <div>
+                                                        <div className="flex justify-between text-xs text-slate-400 mb-1">
+                                                            <span>Zoom ({photoZoom}%)</span>
+                                                            <button onClick={() => setPhotoZoom(100)} className="text-[10px] text-teal-400 hover:underline">Reset</button>
+                                                        </div>
+                                                        <input
+                                                            type="range"
+                                                            min="100"
+                                                            max="250"
+                                                            value={photoZoom}
+                                                            onChange={(e) => setPhotoZoom(Number(e.target.value))}
+                                                            className="w-full accent-teal-500"
+                                                        />
+                                                    </div>
+                                                    <div className="grid grid-cols-2 gap-3">
+                                                        <div>
+                                                            <div className="flex justify-between text-xs text-slate-400 mb-1">
+                                                                <span>Eixo X ({photoX}px)</span>
+                                                                <button onClick={() => setPhotoX(0)} className="text-[10px] text-teal-400 hover:underline">Reset</button>
+                                                            </div>
+                                                            <input
+                                                                type="range"
+                                                                min="-50"
+                                                                max="50"
+                                                                value={photoX}
+                                                                onChange={(e) => setPhotoX(Number(e.target.value))}
+                                                                className="w-full accent-teal-500"
+                                                            />
+                                                        </div>
+                                                        <div>
+                                                            <div className="flex justify-between text-xs text-slate-400 mb-1">
+                                                                <span>Eixo Y ({photoY}px)</span>
+                                                                <button onClick={() => setPhotoY(0)} className="text-[10px] text-teal-400 hover:underline">Reset</button>
+                                                            </div>
+                                                            <input
+                                                                type="range"
+                                                                min="-50"
+                                                                max="50"
+                                                                value={photoY}
+                                                                onChange={(e) => setPhotoY(Number(e.target.value))}
+                                                                className="w-full accent-teal-500"
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {activeTab === 'style' && (
+                                        <div className="space-y-5">
+                                            <div>
+                                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Tema de Fundo</label>
+                                                <div className="grid grid-cols-2 gap-2">
+                                                    <button
+                                                        onClick={() => setTheme('dark')}
+                                                        className={`py-2 px-3 rounded-xl border text-sm font-semibold transition ${
+                                                            theme === 'dark' 
+                                                                ? 'bg-slate-800 text-white border-teal-500/50 shadow-lg' 
+                                                                : 'bg-slate-900/40 text-slate-400 border-slate-800 hover:text-white'
+                                                        }`}
+                                                    >
+                                                        Escuro (Premium)
+                                                    </button>
+                                                    <button
+                                                        onClick={() => setTheme('light')}
+                                                        className={`py-2 px-3 rounded-xl border text-sm font-semibold transition ${
+                                                            theme === 'light' 
+                                                                ? 'bg-white text-slate-950 border-teal-500/50 shadow-lg' 
+                                                                : 'bg-slate-900/40 text-slate-400 border-slate-800 hover:text-white'
+                                                        }`}
+                                                    >
+                                                        Claro (Novo Portal)
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <div>
+                                                <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2.5">Cor de Destaque</label>
+                                                <div className="flex flex-wrap gap-2.5">
+                                                    <button
+                                                        onClick={() => setAccentColor(BRAND_COLORS.teal)}
+                                                        className={`w-8 h-8 rounded-full border-2 transition ${accentColor === BRAND_COLORS.teal ? 'border-white scale-110 shadow-lg' : 'border-transparent opacity-80'}`}
+                                                        style={{ backgroundColor: BRAND_COLORS.teal }}
+                                                    />
+                                                    <button
+                                                        onClick={() => setAccentColor(BRAND_COLORS.mint)}
+                                                        className={`w-8 h-8 rounded-full border-2 transition ${accentColor === BRAND_COLORS.mint ? 'border-white scale-110 shadow-lg' : 'border-transparent opacity-80'}`}
+                                                        style={{ backgroundColor: BRAND_COLORS.mint }}
+                                                    />
+                                                    <button
+                                                        onClick={() => setAccentColor(BRAND_COLORS.blue)}
+                                                        className={`w-8 h-8 rounded-full border-2 transition ${accentColor === BRAND_COLORS.blue ? 'border-white scale-110 shadow-lg' : 'border-transparent opacity-80'}`}
+                                                        style={{ backgroundColor: BRAND_COLORS.blue }}
+                                                    />
+                                                    <button
+                                                        onClick={() => setAccentColor(BRAND_COLORS.magenta)}
+                                                        className={`w-8 h-8 rounded-full border-2 transition ${accentColor === BRAND_COLORS.magenta ? 'border-white scale-110 shadow-lg' : 'border-transparent opacity-80'}`}
+                                                        style={{ backgroundColor: BRAND_COLORS.magenta }}
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <div className="space-y-2 pt-2 border-t border-slate-800">
+                                                <label className="flex items-center gap-3 cursor-pointer p-1.5 rounded-lg hover:bg-slate-900/40 transition">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={showIcons}
+                                                        onChange={(e) => setShowIcons(e.target.checked)}
+                                                        className="rounded accent-teal-500 w-4 h-4"
+                                                    />
+                                                    <span className="text-sm text-slate-300 font-medium">Exibir ícones de contacto</span>
+                                                </label>
+                                                <label className="flex items-center gap-3 cursor-pointer p-1.5 rounded-lg hover:bg-slate-900/40 transition">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={showSlogan}
+                                                        onChange={(e) => setShowSlogan(e.target.checked)}
+                                                        className="rounded accent-teal-500 w-4 h-4"
+                                                    />
+                                                    <span className="text-sm text-slate-300 font-medium">Exibir slogan da marca</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {activeTab === 'canva' && (
+                                        <div className="space-y-4 text-xs md:text-sm text-slate-300 leading-relaxed">
+                                            <div className="p-3 bg-teal-500/10 border border-teal-500/20 text-teal-300 rounded-xl font-medium flex items-center gap-2">
+                                                <i className="fa-brands fa-google text-base"></i>
+                                                Como adicionar sua assinatura no Gmail
+                                            </div>
+
+                                            <div className="space-y-3">
+                                                <div className="flex gap-3 items-start">
+                                                    <span className="w-6 h-6 rounded-full bg-teal-500 text-slate-950 font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">1</span>
+                                                    <div>
+                                                        <strong className="text-white block mb-0.5">Gere a assinatura</strong>
+                                                        Preencha seus dados e clique em <span className="text-teal-300 font-semibold">Copiar p/ E-mail</span>.
+                                                    </div>
+                                                </div>
+                                                <div className="flex gap-3 items-start">
+                                                    <span className="w-6 h-6 rounded-full bg-teal-500 text-slate-950 font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">2</span>
+                                                    <div>
+                                                        <strong className="text-white block mb-0.5">Abra as configurações do Gmail</strong>
+                                                        Clique na engrenagem no canto superior direito e em <span className="text-teal-300 font-semibold">Ver todas as configurações</span>.
+                                                    </div>
+                                                </div>
+                                                <div className="flex gap-3 items-start">
+                                                    <span className="w-6 h-6 rounded-full bg-teal-500 text-slate-950 font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">3</span>
+                                                    <div>
+                                                        <strong className="text-white block mb-0.5">Acesse a aba Geral</strong>
+                                                        Role a página até encontrar a seção <span className="text-teal-300 font-semibold">Assinatura</span>.
+                                                    </div>
+                                                </div>
+                                                <div className="flex gap-3 items-start">
+                                                    <span className="w-6 h-6 rounded-full bg-teal-500 text-slate-950 font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">4</span>
+                                                    <div>
+                                                        <strong className="text-white block mb-0.5">Cole a assinatura</strong>
+                                                        Clique em <span className="text-teal-300 font-semibold">Criar nova</span> e cole com <span className="text-slate-400 font-mono bg-slate-800 px-1.5 py-0.5 rounded">Ctrl + V</span>.
+                                                    </div>
+                                                </div>
+                                                <div className="flex gap-3 items-start">
+                                                    <span className="w-6 h-6 rounded-full bg-teal-500 text-slate-950 font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">5</span>
+                                                    <div>
+                                                        <strong className="text-white block mb-0.5">Defina como padrão</strong>
+                                                        Em <span className="text-teal-300 font-semibold">Padrões de assinatura</span>, selecione para novos e-mails e respostas.
+                                                    </div>
+                                                </div>
+                                                <div className="flex gap-3 items-start">
+                                                    <span className="w-6 h-6 rounded-full bg-teal-500 text-slate-950 font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">6</span>
+                                                    <div>
+                                                        <strong className="text-white block mb-0.5">Salve as alterações</strong>
+                                                        Role até o final e clique em <span className="text-teal-300 font-semibold">Salvar alterações</span>.
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="p-3 bg-amber-500/10 border border-amber-500/20 text-amber-300 rounded-xl text-xs flex items-start gap-2">
+                                                <i className="fa-solid fa-circle-info mt-0.5 flex-shrink-0"></i>
+                                                <span>Links, ícones e cores são preservados ao colar no Gmail.</span>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="p-4 border-t border-slate-800 bg-slate-950/90 flex flex-wrap gap-2">
+                                    <button
+                                        onClick={copyRichText}
+                                        className="flex-1 min-w-[140px] px-4 py-2.5 bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 text-slate-950 rounded-xl text-sm font-bold shadow-lg shadow-teal-500/10 transition flex items-center justify-center gap-2"
+                                    >
+                                        <i className="fa-solid fa-copy"></i>
+                                        {copiedText ? 'Copiado!' : 'Copiar p/ E-mail'}
+                                    </button>
+                                    
+                                    <button
+                                        onClick={downloadPNG}
+                                        disabled={isExporting}
+                                        className="px-4 py-2.5 bg-slate-800 hover:bg-slate-750 text-white rounded-xl text-sm font-semibold border border-slate-700 transition flex items-center justify-center gap-2"
+                                    >
+                                        {isExporting ? (
+                                            <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                                        ) : (
+                                            <i className="fa-solid fa-download text-teal-400"></i>
+                                        )}
+                                        PNG 2X
+                                    </button>
+
+                                    <button
+                                        onClick={copyHtmlCode}
+                                        className="p-2.5 bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white rounded-xl border border-slate-800 transition"
+                                        title="Copiar código HTML bruto"
+                                    >
+                                        <i className="fa-solid fa-code"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* COLUNA DIREITA: PREVISUALIZAÇÃO */}
+                        <div className="lg:col-span-7 flex flex-col justify-center">
+                            <div className="space-y-4">
+                                <div className="flex items-center justify-between px-2">
+                                    <span className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                        <span className="w-2 h-2 rounded-full bg-teal-500 animate-ping"></span>
+                                        Previsualização do Design
+                                    </span>
+                                    <span className="text-xs text-slate-500 font-mono hidden sm:block">600 x 220 px</span>
+                                </div>
+                                <p className="text-xs text-slate-500 px-2 sm:hidden flex items-center gap-1.5">
+                                    <i className="fa-solid fa-arrows-left-right"></i> Deslize para ver a assinatura completa
+                                </p>
+
+                                <div className="w-full bg-slate-950/30 p-4 md:p-6 rounded-2xl border border-slate-800/80">
+                                    <div style={{overflowX:'auto',WebkitOverflowScrolling:'touch',paddingBottom:'4px'}}>
+                                    <div 
+                                        ref={signatureRef}
+                                        id="signature-canvas"
+                                        style={{
+                                            width: '600px',
+                                            height: '220px',
+                                            backgroundColor: theme === 'dark' ? BRAND_COLORS.navy : '#ffffff',
+                                            color: theme === 'dark' ? '#ffffff' : '#1e293b',
+                                            fontFamily: '"Lato", "Inter", sans-serif',
+                                            position: 'relative',
+                                            overflow: 'hidden',
+                                            borderRadius: '16px',
+                                            boxShadow: '0 20px 40px rgba(0, 0, 0, 0.4)',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                        }}
+                                    >
+                                        {/* Lateral Mosaico */}
+                                        <div style={{ position: 'absolute', left: 0, top: 0, width: '120px', height: '100%', zIndex: 1, pointerEvents: 'none' }}>
+                                            <svg viewBox="0 0 160 320" preserveAspectRatio="none" style={{ width: '100%', height: '100%', display: 'block' }}>
+                                                <rect width="160" height="320" fill={theme === 'dark' ? '#0d1e36' : '#ffffff'} />
+                                                <polygon points="0,0 120,0 40,80" fill={BRAND_COLORS.purple} opacity="0.85" />
+                                                <polygon points="120,0 160,0 160,90" fill={BRAND_COLORS.blue} opacity="0.9" />
+                                                <polygon points="160,0 120,0 160,40" fill={BRAND_COLORS.teal} />
+                                                <polygon points="0,0 0,110 40,80" fill={BRAND_COLORS.magenta} opacity="0.9" />
+                                                <polygon points="40,80 120,0 160,90" fill={BRAND_COLORS.teal} opacity="0.75" />
+                                                
+                                                <polygon points="0,110 60,160 0,220" fill={BRAND_COLORS.yellow} opacity="0.8" />
+                                                <polygon points="0,110 40,80 80,130" fill={BRAND_COLORS.purple} />
+                                                <polygon points="40,80 160,90 120,150" fill={BRAND_COLORS.blue} opacity="0.9" />
+                                                <polygon points="80,130 120,150 90,210" fill={BRAND_COLORS.teal} />
+                                                
+                                                <polygon points="90,210 120,150 160,200" fill={BRAND_COLORS.magenta} opacity="0.85" />
+                                                <polygon points="120,150 160,90 160,200" fill={BRAND_COLORS.purple} />
+                                                
+                                                <polygon points="0,220 60,160 50,250" fill={BRAND_COLORS.blue} />
+                                                <polygon points="60,160 90,210 50,250" fill={BRAND_COLORS.teal} opacity="0.8" />
+                                                
+                                                <polygon points="90,210 160,200 140,260" fill={BRAND_COLORS.purple} />
+                                                <polygon points="90,210 140,260 80,290" fill={BRAND_COLORS.yellow} opacity="0.9" />
+                                                <polygon points="50,250 90,210 80,290" fill={BRAND_COLORS.magenta} />
+                                                
+                                                <polygon points="0,220 50,250 0,290" fill={BRAND_COLORS.purple} opacity="0.7" />
+                                                <polygon points="0,290 50,250 40,320" fill={BRAND_COLORS.teal} />
+                                                <polygon points="50,250 80,290 40,320" fill={BRAND_COLORS.blue} />
+                                                <polygon points="80,290 140,260 120,320" fill={BRAND_COLORS.magenta} />
+                                                <polygon points="80,290 120,320 40,320" fill={BRAND_COLORS.purple} />
+                                                <polygon points="140,260 160,200 160,280" fill={BRAND_COLORS.teal} />
+                                                <polygon points="140,260 160,280 120,320" fill={BRAND_COLORS.blue} />
+                                                <polygon points="160,280 160,320 120,320" fill={BRAND_COLORS.yellow} />
+                                            </svg>
+                                        </div>
+
+                                        {/* Foto de Perfil */}
+                                        <div style={{
+                                            position: 'absolute', left: '75px', width: '155px', height: '195px', zIndex: 10,
+                                            borderRadius: '16px', overflow: 'hidden', border: `4px solid ${theme === 'dark' ? BRAND_COLORS.navy : '#ffffff'}`,
+                                            boxShadow: '0 8px 24px rgba(0,0,0,0.25)', backgroundColor: '#cbd5e1', display: 'flex', alignItems: 'center', justifyContent: 'center'
+                                        }}>
+                                            {photoUrl ? (
+                                                <img 
+                                                    src={photoUrl} 
+                                                    alt={name} 
+                                                    style={{ width: '100%', height: '100%', objectFit: 'cover', transform: `scale(${photoZoom / 100}) translate(${photoX}px, ${photoY}px)` }}
+                                                />
+                                            ) : (
+                                                <div style={{ textAlign: 'center', color: '#475569', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                                                    <i className="fa-solid fa-user text-2xl"></i>
+                                                    <span style={{ fontSize: '9px', fontWeight: 'bold' }}>FOTO</span>
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {/* Dados de Contacto */}
+                                        <div style={{ marginLeft: '255px', marginRight: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '190px', flexGrow: 1, zIndex: 2 }}>
+                                            <div>
+                                                <h2 style={{ margin: 0, fontSize: '19px', fontWeight: 'bold', fontFamily: '"Poppins", sans-serif', color: accentColor, lineHeight: '1.2' }}>{name}</h2>
+                                                <p style={{ margin: '2px 0 0 0', fontSize: '12px', color: theme === 'dark' ? '#cbd5e1' : '#475569', fontWeight: '500' }}>{role}</p>
+                                            </div>
+
+                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', margin: '4px 0' }}>
+                                                <span style={{ fontSize: '10px', fontWeight: '700', color: accentColor, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '1px' }}>Contato:</span>
+                                                
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '10.5px' }}>
+                                                    {showIcons && <span style={{ color: accentColor, fontSize: '10px' }}><i className="fa-solid fa-envelope"></i></span>}
+                                                    <a href={`mailto:${email}`} style={{ color: theme === 'dark' ? '#ffffff' : '#1e293b', textDecoration: 'none' }}>{email}</a>
+                                                </div>
+
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '10.5px' }}>
+                                                    {showIcons && <span style={{ color: accentColor, fontSize: '10px' }}><i className="fa-solid fa-phone"></i></span>}
+                                                    <span style={{ color: theme === 'dark' ? '#ffffff' : '#1e293b' }}>{phone}</span>
+                                                </div>
+
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '10.5px' }}>
+                                                    {showIcons && <span style={{ color: accentColor, fontSize: '10px' }}><i className="fa-brands fa-linkedin"></i></span>}
+                                                    <a href={`https://${linkedin}`} target="_blank" rel="noreferrer" style={{ color: theme === 'dark' ? '#ffffff' : '#1e293b', textDecoration: 'none' }}>{linkedin}</a>
+                                                </div>
+
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '10.5px' }}>
+                                                    {showIcons && <span style={{ color: accentColor, fontSize: '10px' }}><i className="fa-solid fa-globe"></i></span>}
+                                                    <a href={`https://${website}`} target="_blank" rel="noreferrer" style={{ color: theme === 'dark' ? '#ffffff' : '#1e293b', textDecoration: 'underline', fontWeight: 'bold' }}>{website}</a>
+                                                </div>
+                                            </div>
+
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', borderTop: `1px solid ${theme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`, paddingTop: '6px' }}>
+                                                <UniFecafLogo theme={theme} height={28} />
+                                                {showSlogan && <span style={{ fontSize: '9px', fontStyle: 'italic', color: theme === 'dark' ? '#94a3b8' : '#64748b', fontWeight: '500' }}>{slogan}</span>}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </main>
+
+                    <footer className="border-t border-slate-800 bg-slate-950 py-4 px-6 text-center text-xs text-slate-500">
+                        <div className="max-w-7xl mx-auto">
+                            Gerador de Identidade Corporativa UniFECAF © 2026. Todos os direitos reservados.
+                        </div>
+                    </footer>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
